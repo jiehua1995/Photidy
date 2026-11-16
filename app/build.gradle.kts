@@ -20,6 +20,18 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val storePath = providers.gradleProperty("photidy.keystore.path").orNull
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = providers.gradleProperty("photidy.keystore.storePassword").orNull
+                keyAlias = providers.gradleProperty("photidy.keystore.keyAlias").orNull
+                keyPassword = providers.gradleProperty("photidy.keystore.keyPassword").orNull
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -46,18 +58,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    signingConfigs {
-        create("release") {
-            val storePath = providers.gradleProperty("photidy.keystore.path").orNull
-            if (storePath != null) {
-                storeFile = file(storePath)
-                storePassword = providers.gradleProperty("photidy.keystore.storePassword").orNull
-                keyAlias = providers.gradleProperty("photidy.keystore.keyAlias").orNull
-                keyPassword = providers.gradleProperty("photidy.keystore.keyPassword").orNull
-            }
-        }
     }
 
     packaging {
