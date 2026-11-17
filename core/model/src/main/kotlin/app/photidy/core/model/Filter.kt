@@ -24,6 +24,7 @@ enum class PhotoSort {
     NEWEST_FIRST,
     OLDEST_FIRST,
     LARGEST_FIRST,
+    RANDOM,
 }
 
 @Serializable
@@ -62,6 +63,8 @@ data class PhotoFilter(
             PhotoSort.NEWEST_FIRST -> filtered.sortedByDescending { it.photo.capturedAt }
             PhotoSort.OLDEST_FIRST -> filtered.sortedBy { it.photo.capturedAt }
             PhotoSort.LARGEST_FIRST -> filtered.sortedByDescending { it.photo.sizeBytes }
+            // Shuffling happens once when the session starts, so the preview stays stable.
+            PhotoSort.RANDOM -> filtered
         }
     }
 

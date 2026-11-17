@@ -1,4 +1,4 @@
-package app.photidy.core.designsystem.theme
+﻿package app.photidy.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +51,10 @@ fun PhotidyTheme(
     val reducedEffects = remember(context) { DeviceEnvironment.shouldReduceEffects(context) }
     val reduceMotion = remember(context) { DeviceEnvironment.isReduceMotionEnabled(context) }
     val animationsEnabled = settings.animationsEnabled && !reduceMotion
-    val intensity = if (reducedEffects) settings.effectIntensity * 0.35f else settings.effectIntensity
+    // A floor keeps Liquid Glass and Fluid Cloud recognisable: at very low values the
+    // translucent fills and light field read as a flat, unchanged background.
+    val requested = if (reducedEffects) settings.effectIntensity * 0.35f else settings.effectIntensity
+    val intensity = requested.coerceIn(0.32f, 1f)
     val motion = remember(settings.animationStyle) { photidyMotion(settings.animationStyle) }
 
     val materialScheme = if (dark) {

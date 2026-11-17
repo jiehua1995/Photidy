@@ -235,6 +235,11 @@ fun OrganizerScreen(
                         }
                     }
                     PhotidyIconButton(
+                        icon = Icons.AutoMirrored.Filled.List,
+                        contentDescription = stringResource(LocR.string.cd_change_scope),
+                        onClick = onChoosePhotos,
+                    )
+                    PhotidyIconButton(
                         icon = Icons.Filled.Refresh,
                         contentDescription = stringResource(LocR.string.cd_undo),
                         onClick = onUndo,
@@ -466,7 +471,7 @@ private fun OrganizerActionBar(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(
                                 if (enabled) {
@@ -485,7 +490,7 @@ private fun OrganizerActionBar(
                             } else {
                                 colors.textTertiary
                             },
-                            modifier = Modifier.size(19.dp),
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                     Text(

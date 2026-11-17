@@ -121,6 +121,7 @@
     <string name="filters_sort_newest">最新优先</string>
     <string name="filters_sort_oldest">最早优先</string>
     <string name="filters_sort_largest">最大优先</string>
+    <string name="filters_sort_random">随机顺序</string>
     <string name="filters_status">整理状态</string>
     <string name="filters_status_all">全部照片</string>
     <string name="filters_status_unreviewed">仅未整理</string>
@@ -128,6 +129,7 @@
     <string name="filters_smart_none">关闭</string>
     <string name="filters_smart_screenshots">截图</string>
     <string name="filters_smart_duplicates">可能重复</string>
+    <string name="filters_smart_hint">先选择一个相册。</string>
     <string name="filters_start_empty">没有符合条件的照片</string>
     <string name="filters_reset">重置筛选</string>
 
@@ -283,6 +285,7 @@
     <!-- 无障碍描述 -->
     <string name="cd_back">返回</string>
     <string name="cd_settings">打开设置</string>
+    <string name="cd_change_scope">重新选择文件夹</string>
     <string name="cd_undo">撤销上一步操作</string>
     <string name="cd_photo">照片</string>
     <string name="cd_favorite">收藏</string>

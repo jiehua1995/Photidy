@@ -121,6 +121,7 @@
     <string name="filters_sort_newest">Newest first</string>
     <string name="filters_sort_oldest">Oldest first</string>
     <string name="filters_sort_largest">Largest first</string>
+    <string name="filters_sort_random">Shuffled</string>
     <string name="filters_status">Review state</string>
     <string name="filters_status_all">Everything</string>
     <string name="filters_status_unreviewed">Not reviewed yet</string>
@@ -128,6 +129,7 @@
     <string name="filters_smart_none">Off</string>
     <string name="filters_smart_screenshots">Screenshots</string>
     <string name="filters_smart_duplicates">Possible duplicates</string>
+    <string name="filters_smart_hint">Pick a folder first.</string>
     <string name="filters_start_empty">No photos match</string>
     <string name="filters_reset">Reset filters</string>
 
@@ -293,6 +295,7 @@
     <!-- Content descriptions -->
     <string name="cd_back">Go back</string>
     <string name="cd_settings">Open settings</string>
+    <string name="cd_change_scope">Choose a different folder</string>
     <string name="cd_undo">Undo last action</string>
     <string name="cd_photo">Photo</string>
     <string name="cd_favorite">Favorite</string>

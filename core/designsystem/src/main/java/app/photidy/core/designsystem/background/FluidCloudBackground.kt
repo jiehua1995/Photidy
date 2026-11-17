@@ -1,4 +1,4 @@
-package app.photidy.core.designsystem.background
+﻿package app.photidy.core.designsystem.background
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -46,7 +46,7 @@ fun FluidCloudBackground(
         if (intensity <= 0.01f) return@Canvas
 
         val maxDim = max(size.width, size.height)
-        val alpha = 0.5f * intensity
+        val alpha = 0.85f * intensity
 
         val centerA = Offset(
             x = size.width * (0.28f + 0.14f * sin(phaseA * 2f * Math.PI.toFloat())),
@@ -69,7 +69,7 @@ fun FluidCloudBackground(
         drawRect(
             brush = Brush.verticalGradient(
                 colors = listOf(
-                    colors.background.copy(alpha = 0.22f),
+                    colors.background.copy(alpha = 0.10f),
                     Color.Transparent,
                 ),
                 startY = 0f,

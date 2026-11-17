@@ -9,6 +9,7 @@ import app.photidy.core.model.LibrarySnapshot
 import app.photidy.core.model.PhotoDecision
 import app.photidy.core.model.PhotoFilter
 import app.photidy.core.model.PhotoItem
+import app.photidy.core.model.PhotoSort
 import app.photidy.core.model.PhotoState
 import app.photidy.core.model.PhotoWithState
 import app.photidy.core.model.SessionEngine
@@ -196,9 +197,10 @@ class PhotoRepository(
     suspend fun startSession(filter: PhotoFilter): Int {
         var count = 0
         store.update { snapshot ->
-            val queue = filter
-                .applyTo(snapshot.toPhotoWithStates(catalog.value), now())
-                .map { it.photo.id }
+            val matched = filter.applyTo(snapshot.toPhotoWithStates(catalog.value), now())
+            // Random order is resolved once here so the session stays stable afterwards.
+            val ordered = if (filter.sort == PhotoSort.RANDOM) matched.shuffled() else matched
+            val queue = ordered.map { it.photo.id }
             count = queue.size
             if (queue.isEmpty()) {
                 snapshot

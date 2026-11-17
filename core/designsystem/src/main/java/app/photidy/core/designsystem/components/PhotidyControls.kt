@@ -96,16 +96,25 @@ fun PhotidyChip(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val colors = PhotidyTheme.colors
     val animations = PhotidyTheme.animationsEnabled
     val background by animateColorAsState(
-        targetValue = if (selected) colors.accentSoft else colors.surface.copy(alpha = 0.35f),
+        targetValue = when {
+            !enabled -> colors.surface.copy(alpha = 0.18f)
+            selected -> colors.accentSoft
+            else -> colors.surface.copy(alpha = 0.35f)
+        },
         animationSpec = tween(durationMillis = if (animations) 180 else 0),
         label = "chip-background",
     )
     val borderColor by animateColorAsState(
-        targetValue = if (selected) colors.accent.copy(alpha = 0.35f) else colors.glassBorder,
+        targetValue = if (selected && enabled) {
+            colors.accent.copy(alpha = 0.35f)
+        } else {
+            colors.glassBorder
+        },
         animationSpec = tween(durationMillis = if (animations) 180 else 0),
         label = "chip-border",
     )
@@ -117,6 +126,7 @@ fun PhotidyChip(
             .border(1.dp, borderColor, CircleShape)
             .selectable(
                 selected = selected,
+                enabled = enabled,
                 role = Role.RadioButton,
                 onClick = onClick,
             )
@@ -126,7 +136,11 @@ fun PhotidyChip(
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
-            color = if (selected) colors.textPrimary else colors.textSecondary,
+            color = when {
+                !enabled -> colors.textTertiary
+                selected -> colors.textPrimary
+                else -> colors.textSecondary
+            },
             maxLines = 1,
         )
     }

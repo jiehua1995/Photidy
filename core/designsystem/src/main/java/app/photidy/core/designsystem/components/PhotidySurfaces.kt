@@ -2,6 +2,7 @@ package app.photidy.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -68,10 +69,55 @@ fun PhotidyScreen(
             .fillMaxSize()
             .background(colors.background),
     ) {
-        if (showCloud && PhotidyTheme.visualStyle == VisualStyle.FLUID_CLOUD) {
-            FluidCloudBackground(Modifier.fillMaxSize())
+        if (showCloud) {
+            when (PhotidyTheme.visualStyle) {
+                VisualStyle.FLUID_CLOUD -> FluidCloudBackground(Modifier.fillMaxSize())
+                VisualStyle.LIQUID_GLASS -> GlassBackdrop(Modifier.fillMaxSize())
+                VisualStyle.MINIMAL -> Unit
+            }
         }
         content()
+    }
+}
+
+/**
+ * Two soft light pools behind the glass surfaces. Without a backdrop the translucent
+ * cards read as flat tinted boxes, which makes "Liquid Glass" indistinguishable from Minimal.
+ */
+@Composable
+private fun GlassBackdrop(modifier: Modifier = Modifier) {
+    val colors = PhotidyTheme.colors
+    val intensity = PhotidyTheme.effectIntensity
+    Canvas(modifier = modifier) {
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(colors.background, colors.backgroundSecondary),
+            ),
+        )
+        val radius = size.width * 0.9f
+        val alpha = 0.18f + 0.30f * intensity
+
+        val warm = Offset(size.width * 0.16f, size.height * 0.10f)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(colors.accentSoft.copy(alpha = alpha), Color.Transparent),
+                center = warm,
+                radius = radius,
+            ),
+            radius = radius,
+            center = warm,
+        )
+
+        val cool = Offset(size.width * 0.88f, size.height * 0.82f)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(colors.cloudSecondary.copy(alpha = alpha * 0.85f), Color.Transparent),
+                center = cool,
+                radius = radius,
+            ),
+            radius = radius,
+            center = cool,
+        )
     }
 }
 
@@ -95,8 +141,8 @@ fun PhotidySurface(
         VisualStyle.MINIMAL -> SolidColor(colors.surface)
         VisualStyle.LIQUID_GLASS -> Brush.linearGradient(
             colors = listOf(
-                colors.glass(1.15f + 0.35f * intensity),
-                colors.glass(0.70f + 0.25f * intensity),
+                colors.glass(1.35f + 0.45f * intensity),
+                colors.glass(0.55f + 0.30f * intensity),
             ),
         )
 
@@ -137,7 +183,7 @@ fun PhotidySurface(
                 drawContent()
                 if (style != VisualStyle.MINIMAL) {
                     drawLine(
-                        color = Color.White.copy(alpha = 0.06f + 0.12f * intensity),
+                        color = Color.White.copy(alpha = 0.10f + 0.16f * intensity),
                         start = Offset(0f, 0.6f),
                         end = Offset(size.width, 0.6f),
                         strokeWidth = 1f,

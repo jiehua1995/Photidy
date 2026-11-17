@@ -238,6 +238,7 @@ private fun SmartSection(
     filter: PhotoFilter,
     onSmartSelected: (SmartFilter) -> Unit,
 ) {
+    val albumSelected = filter.albumId != null
     FilterPanel(title = stringResource(LocR.string.filters_smart)) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
@@ -254,8 +255,17 @@ private fun SmartSection(
                     label = label,
                     selected = filter.smart == smart,
                     onClick = { onSmartSelected(smart) },
+                    enabled = albumSelected,
                 )
             }
+        }
+        if (!albumSelected) {
+            Spacer(Modifier.height(PhotidySpacing.xs))
+            Text(
+                text = stringResource(LocR.string.filters_smart_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = Theme.colors.textTertiary,
+            )
         }
     }
 }
@@ -322,6 +332,7 @@ private fun SortSection(
                     PhotoSort.NEWEST_FIRST -> stringResource(LocR.string.filters_sort_newest)
                     PhotoSort.OLDEST_FIRST -> stringResource(LocR.string.filters_sort_oldest)
                     PhotoSort.LARGEST_FIRST -> stringResource(LocR.string.filters_sort_largest)
+                    PhotoSort.RANDOM -> stringResource(LocR.string.filters_sort_random)
                 }
                 PhotidyChip(
                     label = label,

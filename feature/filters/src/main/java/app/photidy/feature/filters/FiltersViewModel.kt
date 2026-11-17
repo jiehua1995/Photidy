@@ -25,7 +25,10 @@ data class FiltersUiState(
 class FiltersViewModel : ViewModel() {
 
     private val photoRepository = PhotidyGraph.photoRepository
-    private val filter = MutableStateFlow(PhotoFilter())
+
+    /** Reviewed photos stay out of the way by default, so a second pass resumes where it ended. */
+    private val defaultFilter = PhotoFilter(unorganizedOnly = true)
+    private val filter = MutableStateFlow(defaultFilter)
 
     val uiState: StateFlow<FiltersUiState> = combine(
         filter,
@@ -41,11 +44,19 @@ class FiltersViewModel : ViewModel() {
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = FiltersUiState(albums = photoRepository.albums.value),
+        initialValue = FiltersUiState(
+            filter = defaultFilter,
+            albums = photoRepository.albums.value,
+        ),
     )
 
     fun selectAlbum(albumId: String?) {
-        filter.value = filter.value.copy(albumId = albumId)
+        filter.value = if (albumId == null) {
+            // Smart picks are scoped to a single album; dropping the album also drops them.
+            filter.value.copy(albumId = null, smart = SmartFilter.NONE)
+        } else {
+            filter.value.copy(albumId = albumId)
+        }
     }
 
     fun selectMedia(media: MediaFilter) {
@@ -69,7 +80,7 @@ class FiltersViewModel : ViewModel() {
     }
 
     fun reset() {
-        filter.value = PhotoFilter()
+        filter.value = defaultFilter
     }
 
     suspend fun startSession(): Int = photoRepository.startSession(filter.value)

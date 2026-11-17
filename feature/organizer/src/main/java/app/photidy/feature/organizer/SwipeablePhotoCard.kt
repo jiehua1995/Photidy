@@ -371,13 +371,18 @@ private fun SwipeablePhotoCard(
             if (action != GestureAction.NONE) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = PhotidySpacing.lg)
+                        .align(feedbackAlignment(dragDirection))
+                        .padding(
+                            start = PhotidySpacing.md,
+                            end = PhotidySpacing.md,
+                            top = PhotidySpacing.md,
+                            bottom = PhotidySpacing.md,
+                        )
                         .graphicsLayer {
                             val progress = currentProgress()
                             alpha = progress
-                            scaleX = 0.9f + 0.1f * progress
-                            scaleY = 0.9f + 0.1f * progress
+                            scaleX = 0.88f + 0.12f * progress
+                            scaleY = 0.88f + 0.12f * progress
                         },
                 ) {
                     ActionFeedback(action = action)
@@ -509,28 +514,46 @@ private fun ActionFeedback(
 ) {
     val colors = PhotidyTheme.colors
     val color = actionColor(action, colors)
-    Row(
+    Column(
         modifier = modifier
-            .clip(CircleShape)
-            .background(colors.scrim.copy(alpha = 0.5f))
-            .padding(horizontal = PhotidySpacing.md, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+            .clip(RoundedCornerShape(26.dp))
+            .background(colors.scrim.copy(alpha = 0.55f))
+            .padding(horizontal = PhotidySpacing.lg, vertical = PhotidySpacing.md),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(PhotidySpacing.xs),
     ) {
-        Icon(
-            imageVector = actionIcon(action),
-            contentDescription = null,
-            tint = color,
-            modifier = Modifier.size(16.dp),
-        )
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .clip(CircleShape)
+                .background(color.copy(alpha = 0.24f))
+                .border(2.dp, color.copy(alpha = 0.9f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = actionIcon(action),
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(42.dp),
+            )
+        }
         Text(
             text = stringResource(actionLabelRes(action)),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = Color.White,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
     }
+}
+
+private fun feedbackAlignment(direction: SwipeDirection?): Alignment = when (direction) {
+    // The card moves away from the finger, so the badge sits on the side that stays visible.
+    SwipeDirection.LEFT -> Alignment.CenterEnd
+    SwipeDirection.RIGHT -> Alignment.CenterStart
+    SwipeDirection.UP -> Alignment.BottomCenter
+    SwipeDirection.DOWN -> Alignment.TopCenter
+    null -> Alignment.Center
 }
 
 internal fun actionIcon(action: GestureAction): ImageVector = when (action) {
