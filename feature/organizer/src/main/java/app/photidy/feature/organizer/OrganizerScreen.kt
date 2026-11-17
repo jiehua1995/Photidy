@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,9 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -61,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.photidy.core.designsystem.artwork.PhotoImage
 import app.photidy.core.designsystem.components.PhotidyEmptyState
 import app.photidy.core.designsystem.components.PhotidyIconButton
 import app.photidy.core.designsystem.components.PhotidyPrimaryButton
@@ -163,6 +169,11 @@ fun OrganizerRoute(
         onChooseAlbum = viewModel::chooseAlbum,
         onDismissAlbumPicker = viewModel::dismissAlbumPicker,
         snackbarHostState = snackbarHostState,
+        onToggleBatch = viewModel::toggleBatchMode,
+        onToggleBatchSelection = viewModel::toggleBatchSelection,
+        onSelectAllBatch = viewModel::selectAllBatch,
+        onClearBatchSelection = viewModel::clearBatchSelection,
+        onBatchAction = viewModel::applyBatch,
         modifier = modifier,
     )
 }
@@ -180,6 +191,11 @@ fun OrganizerScreen(
     onChooseAlbum: (String) -> Unit,
     onDismissAlbumPicker: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    onToggleBatch: () -> Unit = {},
+    onToggleBatchSelection: (String) -> Unit = {},
+    onSelectAllBatch: () -> Unit = {},
+    onClearBatchSelection: () -> Unit = {},
+    onBatchAction: (GestureAction) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val widthClass = rememberPhotidyWidthClass()
@@ -234,17 +250,32 @@ fun OrganizerScreen(
                             )
                         }
                     }
-                    PhotidyIconButton(
-                        icon = Icons.AutoMirrored.Filled.List,
-                        contentDescription = stringResource(LocR.string.cd_change_scope),
-                        onClick = onChoosePhotos,
-                    )
-                    PhotidyIconButton(
-                        icon = Icons.Filled.Refresh,
-                        contentDescription = stringResource(LocR.string.cd_undo),
-                        onClick = onUndo,
-                        enabled = state.canUndo,
-                    )
+                    if (state.hasSession) {
+                        PhotidyTextButton(
+                            text = stringResource(
+                                if (state.batchMode) {
+                                    LocR.string.organizer_batch_done
+                                } else {
+                                    LocR.string.organizer_batch
+                                },
+                            ),
+                            onClick = onToggleBatch,
+                            tint = colors.accent,
+                        )
+                    }
+                    if (!state.batchMode) {
+                        PhotidyIconButton(
+                            icon = Icons.AutoMirrored.Filled.List,
+                            contentDescription = stringResource(LocR.string.cd_change_scope),
+                            onClick = onChoosePhotos,
+                        )
+                        PhotidyIconButton(
+                            icon = Icons.Filled.Refresh,
+                            contentDescription = stringResource(LocR.string.cd_undo),
+                            onClick = onUndo,
+                            enabled = state.canUndo,
+                        )
+                    }
                 }
 
                 if (state.hasSession) {
@@ -276,6 +307,15 @@ fun OrganizerScreen(
                         onOpenReview = onOpenReview,
                         onBackHome = onBack,
                         onUndo = onUndo,
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    state.batchMode -> OrganizerBatchArea(
+                        state = state,
+                        onToggleSelection = onToggleBatchSelection,
+                        onSelectAll = onSelectAllBatch,
+                        onClearSelection = onClearBatchSelection,
+                        onApply = onBatchAction,
                         modifier = Modifier.weight(1f),
                     )
 
@@ -422,6 +462,165 @@ private fun OrganizerCardArea(
                     bottom = PhotidySpacing.md,
                 ),
         )
+    }
+}
+
+@Composable
+private fun OrganizerBatchArea(
+    state: OrganizerUiState,
+    onToggleSelection: (String) -> Unit,
+    onSelectAll: () -> Unit,
+    onClearSelection: () -> Unit,
+    onApply: (GestureAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = Theme.colors
+    val allSelected = state.batchItems.isNotEmpty() && state.batchIds.size == state.batchItems.size
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (state.batchItems.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                PhotidyEmptyState(
+                    title = stringResource(LocR.string.organizer_batch_empty),
+                    message = stringResource(LocR.string.organizer_batch_empty_message),
+                )
+            }
+        } else {
+            Text(
+                text = stringResource(LocR.string.organizer_batch_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.textTertiary,
+                modifier = Modifier.padding(vertical = PhotidySpacing.xs),
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(104.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .widthIn(max = 900.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = PhotidySpacing.lg),
+                contentPadding = PaddingValues(vertical = PhotidySpacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+                verticalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+            ) {
+                items(state.batchItems, key = { it.photo.id }) { item ->
+                    BatchTile(
+                        item = item,
+                        selected = item.photo.id in state.batchIds,
+                        onClick = { onToggleSelection(item.photo.id) },
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = stringResource(LocR.string.review_selected, state.batchIds.size),
+            style = MaterialTheme.typography.bodySmall,
+            color = colors.textSecondary,
+            modifier = Modifier.padding(vertical = PhotidySpacing.xs),
+        )
+
+        Row(
+            modifier = Modifier
+                .widthIn(max = 640.dp)
+                .fillMaxWidth()
+                .padding(horizontal = PhotidySpacing.lg, vertical = PhotidySpacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PhotidyTextButton(
+                text = stringResource(
+                    if (allSelected) {
+                        LocR.string.review_deselect_all
+                    } else {
+                        LocR.string.review_select_all
+                    },
+                ),
+                onClick = if (allSelected) onClearSelection else onSelectAll,
+                enabled = state.batchItems.isNotEmpty(),
+            )
+            Spacer(Modifier.weight(1f))
+            PhotidyTextButton(
+                text = stringResource(LocR.string.organizer_batch_delete, state.batchIds.size),
+                onClick = { onApply(GestureAction.ADD_TO_DELETE_LIST) },
+                enabled = state.batchIds.isNotEmpty(),
+                tint = colors.danger,
+            )
+            Spacer(Modifier.width(PhotidySpacing.xs))
+            PhotidyTextButton(
+                text = stringResource(LocR.string.organizer_batch_keep, state.batchIds.size),
+                onClick = { onApply(GestureAction.KEEP) },
+                enabled = state.batchIds.isNotEmpty(),
+                tint = colors.accent,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BatchTile(
+    item: PhotoWithState,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = Theme.colors
+    val corner = RoundedCornerShape(16.dp)
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(corner)
+            .background(colors.surface)
+            .clickable(onClick = onClick),
+    ) {
+        PhotoImage(photo = item.photo, modifier = Modifier.fillMaxSize())
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.Transparent, colors.scrim.copy(alpha = 0.24f)),
+                    ),
+                ),
+        )
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.accent.copy(alpha = 0.18f)),
+            )
+        }
+        Box(
+            modifier = Modifier
+                .padding(PhotidySpacing.sm)
+                .align(Alignment.TopEnd)
+                .size(23.dp)
+                .clip(CircleShape)
+                .background(if (selected) colors.accent else colors.scrim.copy(alpha = 0.35f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = stringResource(LocR.string.cd_selected),
+                    tint = colors.onAccent,
+                    modifier = Modifier.size(14.dp),
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.18f)),
+                )
+            }
+        }
     }
 }
 

@@ -130,7 +130,11 @@ class PhotoRepository(
         scope.launch {
             deviceScanning.value = true
             try {
-                deviceLibrary.value = mediaLibrary.load()
+                // Pages arrive while the cursor is still open, so the first photos show up
+                // long before a very large library finishes scanning.
+                deviceLibrary.value = mediaLibrary.load { partial ->
+                    deviceLibrary.value = partial
+                }
             } finally {
                 deviceScanning.value = false
             }
@@ -214,6 +218,14 @@ class PhotoRepository(
     suspend fun commitAction(action: GestureAction, albumId: String? = null) {
         store.update { snapshot ->
             SessionEngine.commit(snapshot, action, albumId)
+        }
+    }
+
+    /** Applies one decision to every selected photo in the current queue. */
+    suspend fun commitBatch(action: GestureAction, photoIds: Set<String>) {
+        if (photoIds.isEmpty()) return
+        store.update { snapshot ->
+            SessionEngine.commitBatch(snapshot, photoIds, action)
         }
     }
 

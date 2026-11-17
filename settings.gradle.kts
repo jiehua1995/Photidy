@@ -28,6 +28,7 @@ include(
     ":feature:organizer",
     ":feature:filters",
     ":feature:review",
+    ":feature:favorites",
     ":feature:insights",
     ":feature:settings",
     ":feature:photodetail",

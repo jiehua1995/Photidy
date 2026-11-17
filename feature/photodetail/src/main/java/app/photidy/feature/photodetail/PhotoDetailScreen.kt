@@ -1,7 +1,11 @@
 package app.photidy.feature.photodetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,17 +28,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -48,6 +61,7 @@ import app.photidy.core.designsystem.artwork.PhotoImage
 import app.photidy.core.designsystem.components.PhotidyBadge
 import app.photidy.core.designsystem.components.PhotidyBadgeTone
 import app.photidy.core.designsystem.components.PhotidyEmptyState
+import app.photidy.core.designsystem.components.PhotidyIconButton
 import app.photidy.core.designsystem.components.PhotidyPrimaryButton
 import app.photidy.core.designsystem.components.PhotidyScreen
 import app.photidy.core.designsystem.components.PhotidySecondaryButton
@@ -61,6 +75,7 @@ import app.photidy.core.localization.AlbumNames
 import app.photidy.core.localization.PhotidyFormatters
 import app.photidy.core.localization.R as LocR
 import app.photidy.core.model.PhotoDecision
+import app.photidy.core.model.PhotoItem
 import app.photidy.core.model.PhotoScene
 import app.photidy.core.model.PhotoState
 import app.photidy.core.model.PhotoWithState
@@ -99,6 +114,9 @@ fun PhotoDetailScreen(
     val expanded = widthClass == PhotidyWidthClass.EXPANDED
     val locale: Locale = LocalConfiguration.current.locales[0]
     val item = state.item
+    // The zoom viewer lives above the scrollable page, so pinch and pan never fight the
+    // detail column for vertical drags.
+    var previewOpen by remember { mutableStateOf(false) }
 
     PhotidyScreen(modifier = modifier) {
         Column(
@@ -146,6 +164,7 @@ fun PhotoDetailScreen(
                             DetailPhoto(
                                 item = item,
                                 maxHeight = 520.dp,
+                                onOpenPreview = { previewOpen = true },
                                 modifier = Modifier.weight(1.25f),
                             )
                             DetailInfo(
@@ -165,7 +184,11 @@ fun PhotoDetailScreen(
                                 .fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(PhotidySpacing.md),
                         ) {
-                            DetailPhoto(item = item, maxHeight = 440.dp)
+                            DetailPhoto(
+                                item = item,
+                                maxHeight = 440.dp,
+                                onOpenPreview = { previewOpen = true },
+                            )
                             DetailInfo(
                                 item = item,
                                 locale = locale,
@@ -181,12 +204,18 @@ fun PhotoDetailScreen(
             }
         }
     }
+
+    val previewPhoto = item?.photo
+    if (previewOpen && previewPhoto != null) {
+        PhotoZoomOverlay(photo = previewPhoto, onClose = { previewOpen = false })
+    }
 }
 
 @Composable
 private fun DetailPhoto(
     item: PhotoWithState,
     maxHeight: Dp,
+    onOpenPreview: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = Theme.colors
@@ -208,7 +237,8 @@ private fun DetailPhoto(
                 .height(height)
                 .clip(corner)
                 .border(1.dp, colors.glassBorder, corner)
-                .background(colors.surface),
+                .background(colors.surface)
+                .clickable(onClick = onOpenPreview),
         ) {
             PhotoImage(
                 photo = photo,
@@ -216,6 +246,28 @@ private fun DetailPhoto(
                 contentDescription = photo.name,
                 contentScale = ContentScale.Fit,
             )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(PhotidySpacing.sm)
+                    .clip(CircleShape)
+                    .background(colors.scrim.copy(alpha = 0.42f))
+                    .padding(horizontal = PhotidySpacing.sm, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(13.dp),
+                )
+                Text(
+                    text = stringResource(LocR.string.detail_open_preview),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White,
+                )
+            }
             if (photo.isVideo && videoDuration != null) {
                 Row(
                     modifier = Modifier
@@ -241,6 +293,88 @@ private fun DetailPhoto(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PhotoZoomOverlay(
+    photo: PhotoItem,
+    onClose: () -> Unit,
+) {
+    val colors = Theme.colors
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    BackHandler(onBack = onClose)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.scrim.copy(alpha = 0.94f))
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        if (scale > 1f) {
+                            scale = 1f
+                            offset = Offset.Zero
+                        } else {
+                            scale = 2.5f
+                        }
+                    },
+                )
+            }
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    // Panning is clamped to the scaled bounds so the photo cannot be
+                    // dragged fully off screen.
+                    val next = (scale * zoom).coerceIn(1f, 5f)
+                    val maxX = (next - 1f) * size.width / 2f
+                    val maxY = (next - 1f) * size.height / 2f
+                    offset = if (next <= 1f) {
+                        Offset.Zero
+                    } else {
+                        Offset(
+                            x = (offset.x + pan.x).coerceIn(-maxX, maxX),
+                            y = (offset.y + pan.y).coerceIn(-maxY, maxY),
+                        )
+                    }
+                    scale = next
+                }
+            },
+    ) {
+        PhotoImage(
+            photo = photo,
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    translationX = offset.x
+                    translationY = offset.y
+                },
+            contentDescription = photo.name,
+            contentScale = ContentScale.Fit,
+        )
+        PhotidyIconButton(
+            icon = Icons.Filled.Close,
+            contentDescription = stringResource(LocR.string.cd_close),
+            onClick = onClose,
+            tint = Color.White,
+            container = true,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .safeDrawingPadding()
+                .padding(PhotidySpacing.md),
+        )
+        Text(
+            text = stringResource(LocR.string.detail_zoom_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.72f),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .safeDrawingPadding()
+                .padding(bottom = PhotidySpacing.xl),
+        )
     }
 }
 

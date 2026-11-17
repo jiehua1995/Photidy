@@ -61,6 +61,48 @@ object SessionEngine {
         )
     }
 
+    /**
+     * Applies one action to several queued photos at once. Photos marked here are skipped by
+     * the cursor, so the session lands on the next undecided card.
+     */
+    fun commitBatch(
+        snapshot: LibrarySnapshot,
+        photoIds: Set<String>,
+        action: GestureAction,
+    ): LibrarySnapshot {
+        val session = snapshot.session ?: return snapshot
+        if (session.isComplete) return snapshot
+        if (action == GestureAction.NONE || action.requiresAlbum) return snapshot
+        if (photoIds.isEmpty()) return snapshot
+
+        val queued = session.queue.toSet()
+        val targets = photoIds.filter { it in queued }
+        if (targets.isEmpty()) return snapshot
+
+        var states = snapshot.states
+        var undoStack = snapshot.undoStack
+        targets.forEach { photoId ->
+            val previous = states[photoId] ?: PhotoState.Initial
+            val next = resolveState(previous, action, null)
+            if (next != previous) {
+                states = states + (photoId to next)
+                undoStack = (undoStack + UndoEntry(photoId, previous, session.cursor))
+                    .takeLast(MAX_UNDO)
+            }
+        }
+
+        var cursor = session.cursor
+        while (cursor < session.queue.size && states[session.queue[cursor]]?.isReviewed == true) {
+            cursor++
+        }
+
+        return snapshot.copy(
+            states = states,
+            session = session.copy(cursor = cursor),
+            undoStack = undoStack,
+        )
+    }
+
     fun undo(snapshot: LibrarySnapshot): LibrarySnapshot {
         val entry = snapshot.undoStack.lastOrNull() ?: return snapshot
         val session = snapshot.session ?: return snapshot

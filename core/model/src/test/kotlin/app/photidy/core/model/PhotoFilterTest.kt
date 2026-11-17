@@ -111,4 +111,21 @@ class PhotoFilterTest {
 
         assertEquals(listOf("b"), result.map { it.photo.id })
     }
+
+    @Test
+    fun `favorites filter only keeps favorited photos`() {
+        val withFavorite = library.map { item ->
+            if (item.photo.id == "d") {
+                item.copy(state = item.state.copy(favorite = true))
+            } else {
+                item
+            }
+        }
+
+        val ids = PhotoFilter(favoritesOnly = true)
+            .applyTo(withFavorite, now)
+            .map { it.photo.id }
+
+        assertEquals(listOf("d"), ids)
+    }
 }

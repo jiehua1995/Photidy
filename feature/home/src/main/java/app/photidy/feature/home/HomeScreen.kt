@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -74,6 +75,7 @@ fun HomeRoute(
     onStartOrganizer: () -> Unit,
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
+    onOpenFavorites: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -101,6 +103,7 @@ fun HomeRoute(
         onStartOrganizer = onStartOrganizer,
         onContinueOrganizer = onContinueOrganizer,
         onOpenReview = onOpenReview,
+        onOpenFavorites = onOpenFavorites,
         onOpenInsights = onOpenInsights,
         onOpenSettings = onOpenSettings,
         modifier = modifier,
@@ -116,6 +119,7 @@ fun HomeScreen(
     onStartOrganizer: () -> Unit,
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
+    onOpenFavorites: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -196,6 +200,7 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(PhotidySpacing.md),
                         ) {
                             Spacer(Modifier.height(PhotidySpacing.xxl))
+                            FavoritesCard(state = state, onClick = onOpenFavorites)
                             ReviewCard(
                                 state = state,
                                 locale = locale,
@@ -237,6 +242,11 @@ fun HomeScreen(
                                 modifier = Modifier.weight(1f),
                             )
                         }
+                        FavoritesCard(
+                            state = state,
+                            onClick = onOpenFavorites,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                         LibrarySummary(state = state, locale = locale)
                     }
                 }
@@ -396,6 +406,25 @@ private fun PhotoStack(photos: List<PhotoItem>) {
             }
         }
     }
+}
+
+@Composable
+private fun FavoritesCard(
+    state: HomeUiState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    QuickCard(
+        title = stringResource(LocR.string.home_favorites_title),
+        subtitle = pluralStringResource(
+            LocR.plurals.photo_count,
+            state.favoriteCount,
+            state.favoriteCount,
+        ),
+        icon = Icons.Filled.Favorite,
+        onClick = onClick,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -559,6 +588,7 @@ private fun HomeScreenPreview() {
             onStartOrganizer = {},
             onContinueOrganizer = {},
             onOpenReview = {},
+            onOpenFavorites = {},
             onOpenInsights = {},
             onOpenSettings = {},
         )

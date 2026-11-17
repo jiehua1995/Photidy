@@ -35,6 +35,7 @@ data class PhotoFilter(
     val unorganizedOnly: Boolean = false,
     val sort: PhotoSort = PhotoSort.NEWEST_FIRST,
     val smart: SmartFilter = SmartFilter.NONE,
+    val favoritesOnly: Boolean = false,
 ) {
     fun matches(item: PhotoWithState, now: Long): Boolean {
         val photo = item.photo
@@ -45,6 +46,7 @@ data class PhotoFilter(
             MediaFilter.VIDEOS -> if (!photo.isVideo) return false
         }
         if (unorganizedOnly && item.state.isReviewed) return false
+        if (favoritesOnly && !item.state.favorite) return false
         if (!isWithinDateRange(photo.capturedAt, now)) return false
         return true
     }

@@ -33,6 +33,7 @@
     <string name="home_start_subtitle">选择一小批照片，慢慢来。</string>
     <string name="home_review_title">待删除清单</string>
     <string name="home_review_subtitle_empty">还没有标记照片</string>
+    <string name="home_favorites_title">收藏</string>
     <string name="home_insights_title">回顾</string>
     <string name="home_insights_subtitle">已整理 %1$d / %2$d</string>
     <string name="home_library_label">你的照片库</string>
@@ -81,6 +82,13 @@
     <string name="organizer_session_acted">已看 %1$d 张</string>
     <string name="organizer_session_remaining">还剩 %1$d 张</string>
     <string name="organizer_card_detail">详情</string>
+    <string name="organizer_batch">批量</string>
+    <string name="organizer_batch_done">完成</string>
+    <string name="organizer_batch_hint">点选照片，再批量处理。</string>
+    <string name="organizer_batch_delete">待删除 %1$d 张</string>
+    <string name="organizer_batch_keep">保留 %1$d 张</string>
+    <string name="organizer_batch_empty">这一批已经处理完</string>
+    <string name="organizer_batch_empty_message">退出批量模式，继续逐张整理。</string>
 
     <!-- 手势动作说明 -->
     <string name="action_delete_desc">加入待删除清单</string>
@@ -154,6 +162,11 @@
     <string name="review_delete_failed">未删除任何照片。</string>
     <string name="review_open_photo">查看照片</string>
     <string name="review_selected">已选 %1$d 张</string>
+
+    <!-- 收藏 -->
+    <string name="favorites_title">收藏</string>
+    <string name="favorites_empty_title">还没有收藏</string>
+    <string name="favorites_empty_message">整理照片时点一下爱心，喜欢的照片会集中出现在这里。</string>
 
     <!-- 回顾 -->
     <string name="insights_title">回顾</string>
@@ -239,6 +252,8 @@
     <string name="detail_action_remove_delete">移出待删除清单</string>
     <string name="detail_safety_note">只读预览，不会修改你设备上的任何文件。</string>
     <string name="detail_not_found">未找到这张照片。</string>
+    <string name="detail_open_preview">点击查看大图</string>
+    <string name="detail_zoom_hint">双指缩放 · 双击放大</string>
 
     <!-- 相册 -->
     <string name="album_camera">相机</string>

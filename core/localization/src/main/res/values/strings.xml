@@ -33,6 +33,7 @@
     <string name="home_start_subtitle">Choose a calm, focused batch.</string>
     <string name="home_review_title">Deletion list</string>
     <string name="home_review_subtitle_empty">Nothing marked yet</string>
+    <string name="home_favorites_title">Favorites</string>
     <string name="home_insights_title">Look back</string>
     <string name="home_insights_subtitle">%1$d of %2$d organized</string>
     <string name="home_library_label">Your library</string>
@@ -81,6 +82,13 @@
     <string name="organizer_session_acted">%1$d reviewed</string>
     <string name="organizer_session_remaining">%1$d left</string>
     <string name="organizer_card_detail">Details</string>
+    <string name="organizer_batch">Batch</string>
+    <string name="organizer_batch_done">Done</string>
+    <string name="organizer_batch_hint">Tap photos to select them.</string>
+    <string name="organizer_batch_delete">To delete %1$d</string>
+    <string name="organizer_batch_keep">Keep %1$d</string>
+    <string name="organizer_batch_empty">Nothing left in this batch</string>
+    <string name="organizer_batch_empty_message">Leave batch mode to continue one photo at a time.</string>
 
     <!-- Gesture action descriptions -->
     <string name="action_delete_desc">Add to deletion list</string>
@@ -154,6 +162,11 @@
     <string name="review_delete_failed">Nothing was deleted.</string>
     <string name="review_open_photo">Open photo</string>
     <string name="review_selected">%1$d selected</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty_title">No favorites yet</string>
+    <string name="favorites_empty_message">Tap the heart while tidying and the photos you love gather here.</string>
 
     <!-- Insights -->
     <string name="insights_title">Look back</string>
@@ -239,6 +252,8 @@
     <string name="detail_action_remove_delete">Remove from deletion list</string>
     <string name="detail_safety_note">Read-only preview. Nothing on your device is changed.</string>
     <string name="detail_not_found">Photo not found.</string>
+    <string name="detail_open_preview">Tap to zoom</string>
+    <string name="detail_zoom_hint">Pinch to zoom · double-tap to enlarge</string>
 
     <!-- Albums -->
     <string name="album_camera">Camera</string>

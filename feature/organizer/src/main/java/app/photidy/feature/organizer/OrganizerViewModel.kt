@@ -42,6 +42,10 @@ data class OrganizerUiState(
     val pendingAlbumPhotoId: String? = null,
     val albums: List<Album> = emptyList(),
     val stats: SessionStatsUi? = null,
+    val batchMode: Boolean = false,
+    /** Photos still waiting in the queue, used by the batch picker. */
+    val batchItems: List<PhotoWithState> = emptyList(),
+    val batchIds: Set<String> = emptySet(),
 ) {
     val progress: Float
         get() = if (total == 0) 0f else cursor.toFloat() / total
@@ -60,20 +64,35 @@ sealed interface OrganizerEvent {
 
 class OrganizerViewModel : ViewModel() {
 
+    private data class BatchSelection(
+        val active: Boolean = false,
+        val ids: Set<String> = emptySet(),
+    )
+
+    private data class PanelState(
+        val pendingAlbumPhotoId: String?,
+        val batch: BatchSelection,
+    )
+
     private val photoRepository = PhotidyGraph.photoRepository
     private val settingsRepository = PhotidyGraph.settingsRepository
     private val pendingAlbum = MutableStateFlow<String?>(null)
+    private val batch = MutableStateFlow(BatchSelection())
     private val eventChannel = Channel<OrganizerEvent>(Channel.BUFFERED)
 
     val events = eventChannel.receiveAsFlow()
+
+    private val panels = combine(pendingAlbum, batch) { pendingAlbumPhotoId, selection ->
+        PanelState(pendingAlbumPhotoId, selection)
+    }
 
     val uiState: StateFlow<OrganizerUiState> = combine(
         photoRepository.photos,
         photoRepository.snapshot,
         settingsRepository.settings,
-        pendingAlbum,
+        panels,
         photoRepository.albums,
-    ) { photos, snapshot, settings, pendingAlbumPhotoId, albums ->
+    ) { photos, snapshot, settings, panel, albums ->
         val byId = photos.associateBy { it.photo.id }
         val session = snapshot.session
         val queuePhotos = session?.queue.orEmpty().mapNotNull { byId[it] }
@@ -84,6 +103,12 @@ class OrganizerViewModel : ViewModel() {
             .orEmpty()
             .take(5)
             .mapNotNull { byId[it] }
+        val batchItems = session?.queue
+            ?.drop(session.cursor)
+            .orEmpty()
+            .mapNotNull { byId[it] }
+            .filterNot { it.state.isReviewed }
+        val batchIds = panel.batch.ids.intersect(batchItems.mapTo(HashSet()) { it.photo.id })
 
         val stats = session?.let {
             SessionStatsUi(
@@ -109,9 +134,12 @@ class OrganizerViewModel : ViewModel() {
             canUndo = snapshot.undoStack.isNotEmpty(),
             gestureBindings = settings.gestures,
             hapticsEnabled = settings.hapticsEnabled,
-            pendingAlbumPhotoId = pendingAlbumPhotoId,
+            pendingAlbumPhotoId = panel.pendingAlbumPhotoId,
             albums = albums,
             stats = stats,
+            batchMode = panel.batch.active && session != null && !session.isComplete,
+            batchItems = batchItems,
+            batchIds = batchIds,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -173,6 +201,43 @@ class OrganizerViewModel : ViewModel() {
 
     fun dismissAlbumPicker() {
         pendingAlbum.value = null
+    }
+
+    fun toggleBatchMode() {
+        batch.value = if (batch.value.active) {
+            BatchSelection()
+        } else {
+            BatchSelection(active = true)
+        }
+    }
+
+    fun toggleBatchSelection(photoId: String) {
+        val current = batch.value
+        if (!current.active) return
+        val ids = if (photoId in current.ids) current.ids - photoId else current.ids + photoId
+        batch.value = current.copy(ids = ids)
+    }
+
+    fun selectAllBatch() {
+        batch.value = BatchSelection(
+            active = true,
+            ids = uiState.value.batchItems.mapTo(HashSet()) { it.photo.id },
+        )
+    }
+
+    fun clearBatchSelection() {
+        batch.value = batch.value.copy(ids = emptySet())
+    }
+
+    /** Applies one decision to the whole batch and clears the selection. */
+    fun applyBatch(action: GestureAction) {
+        if (action == GestureAction.NONE || action.requiresAlbum) return
+        val ids = batch.value.ids
+        if (ids.isEmpty()) return
+        viewModelScope.launch {
+            photoRepository.commitBatch(action, ids)
+            batch.value = batch.value.copy(ids = emptySet())
+        }
     }
 
     fun undo() {

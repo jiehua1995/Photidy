@@ -172,4 +172,53 @@ class SessionEngineTest {
         assertEquals(0, result.session?.cursor)
         assertTrue(result.session?.isComplete == true)
     }
+
+    @Test
+    fun `batch keep marks every selected photo and skips them`() {
+        val result = SessionEngine.commitBatch(
+            sessionSnapshot(),
+            setOf("photo_1", "photo_2"),
+            GestureAction.KEEP,
+        )
+
+        assertEquals(PhotoDecision.KEPT, result.stateOf("photo_1").decision)
+        assertEquals(PhotoDecision.KEPT, result.stateOf("photo_2").decision)
+        assertEquals(PhotoDecision.UNREVIEWED, result.stateOf("photo_3").decision)
+        assertEquals(2, result.session?.cursor)
+        assertEquals("photo_3", result.session?.currentPhotoId)
+    }
+
+    @Test
+    fun `batch delete marks only queued photos`() {
+        val result = SessionEngine.commitBatch(
+            sessionSnapshot(),
+            setOf("photo_1", "not_in_queue"),
+            GestureAction.ADD_TO_DELETE_LIST,
+        )
+
+        assertEquals(PhotoDecision.DELETE_CANDIDATE, result.stateOf("photo_1").decision)
+        assertFalse(result.states.containsKey("not_in_queue"))
+        assertEquals(1, result.session?.cursor)
+    }
+
+    @Test
+    fun `batch with an empty selection changes nothing`() {
+        val snapshot = sessionSnapshot()
+        assertEquals(snapshot, SessionEngine.commitBatch(snapshot, emptySet(), GestureAction.KEEP))
+    }
+
+    @Test
+    fun `batch undo restores one photo at a time`() {
+        val result = SessionEngine.commitBatch(
+            sessionSnapshot(),
+            setOf("photo_1", "photo_2"),
+            GestureAction.KEEP,
+        )
+        val undone = SessionEngine.undo(result)
+
+        assertEquals(0, undone.session?.cursor)
+        assertEquals(1, undone.undoStack.size)
+        assertEquals(PhotoDecision.KEPT, undone.stateOf("photo_1").decision)
+        assertFalse(undone.states.containsKey("photo_2"))
+    }
 }

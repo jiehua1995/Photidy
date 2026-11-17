@@ -32,6 +32,7 @@ import app.photidy.core.designsystem.theme.PhotidyTheme
 import app.photidy.core.localization.LocaleController
 import app.photidy.core.model.AppSettings
 import app.photidy.core.model.ThemeMode
+import app.photidy.feature.favorites.FavoritesRoute
 import app.photidy.feature.filters.FiltersRoute
 import app.photidy.feature.home.HomeRoute
 import app.photidy.feature.insights.InsightsRoute
@@ -45,6 +46,7 @@ private object Routes {
     const val FILTERS = "filters"
     const val ORGANIZER = "organizer"
     const val REVIEW = "review"
+    const val FAVORITES = "favorites"
     const val INSIGHTS = "insights"
     const val SETTINGS = "settings"
     const val PHOTO_DETAIL = "photo/{photoId}"
@@ -134,6 +136,7 @@ private fun PhotidyNavHost() {
                 onStartOrganizer = { navController.navigate(Routes.FILTERS) },
                 onContinueOrganizer = { navController.navigate(Routes.ORGANIZER) },
                 onOpenReview = { navController.navigate(Routes.REVIEW) },
+                onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
                 onOpenInsights = { navController.navigate(Routes.INSIGHTS) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
             )
@@ -166,6 +169,18 @@ private fun PhotidyNavHost() {
                 onBack = { navController.popBackStack() },
                 onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
                 onStartTidying = { navController.navigate(Routes.FILTERS) },
+            )
+        }
+
+        composable(Routes.FAVORITES) {
+            FavoritesRoute(
+                onBack = { navController.popBackStack() },
+                onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
+                onSessionStarted = {
+                    navController.navigate(Routes.ORGANIZER) {
+                        popUpTo(Routes.HOME)
+                    }
+                },
             )
         }
 

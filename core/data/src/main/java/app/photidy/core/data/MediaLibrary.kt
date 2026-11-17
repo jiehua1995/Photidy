@@ -42,13 +42,26 @@ class MediaLibrary(private val context: Context) {
 
     fun hasFullAccess(): Boolean = PhotoAccess.hasFullAccess(context)
 
-    suspend fun load(limit: Int = MAX_PHOTOS): DeviceLibrary = withContext(Dispatchers.IO) {
+    suspend fun load(
+        limit: Int = MAX_PHOTOS,
+        onPage: ((DeviceLibrary) -> Unit)? = null,
+    ): DeviceLibrary = withContext(Dispatchers.IO) {
         if (!hasAccess()) return@withContext DeviceLibrary()
-        val rows = runCatching { queryRows(limit) }.getOrElse { emptyList() }
+        val rows = ArrayList<DeviceMediaRow>(minOf(limit, PAGE_SIZE))
+        runCatching {
+            queryRows(limit) { row ->
+                rows += row
+                // Publishing every page keeps the first photos visible long before a large
+                // library has finished scanning.
+                if (onPage != null && rows.size % PAGE_SIZE == 0) {
+                    onPage(buildDeviceLibrary(rows, limit))
+                }
+            }
+        }
         buildDeviceLibrary(rows, limit)
     }
 
-    private fun queryRows(limit: Int): List<DeviceMediaRow> {
+    private fun queryRows(limit: Int, onRow: (DeviceMediaRow) -> Unit) {
         val collection = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
         val projection = arrayOf(
             MediaStore.MediaColumns._ID,
@@ -73,7 +86,6 @@ class MediaLibrary(private val context: Context) {
         val order = "${MediaStore.MediaColumns.DATE_TAKEN} DESC, " +
             "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
-        val rows = ArrayList<DeviceMediaRow>(minOf(limit, 512))
         context.contentResolver.query(
             collection,
             projection,
@@ -95,7 +107,8 @@ class MediaLibrary(private val context: Context) {
             val relativePathColumn = cursor.getColumnIndex(MediaStore.MediaColumns.RELATIVE_PATH)
             val durationColumn = cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION)
 
-            while (cursor.moveToNext() && rows.size < limit) {
+            var count = 0
+            while (cursor.moveToNext() && count < limit) {
                 val mediaId = cursor.getLong(idColumn)
                 val mediaType = if (typeColumn >= 0) cursor.getInt(typeColumn) else 0
                 val mime = mimeColumn.takeIf { it >= 0 }?.let(cursor::getStringOrNull)
@@ -108,39 +121,43 @@ class MediaLibrary(private val context: Context) {
                 } else {
                     0L
                 }
-                rows += DeviceMediaRow(
-                    mediaId = mediaId,
-                    displayName = nameColumn.takeIf { it >= 0 }?.let(cursor::getStringOrNull),
-                    mimeType = mime,
-                    capturedAt = if (takenAt > 0L) takenAt else addedAt * 1_000L,
-                    width = if (widthColumn >= 0) cursor.getInt(widthColumn) else 0,
-                    height = if (heightColumn >= 0) cursor.getInt(heightColumn) else 0,
-                    sizeBytes = if (sizeColumn >= 0) cursor.getLong(sizeColumn) else 0L,
-                    isVideo = isVideo,
-                    durationSeconds = if (isVideo && durationMillis > 0L) {
-                        (durationMillis / 1_000L).toInt()
-                    } else {
-                        null
-                    },
-                    bucketId = if (bucketColumn >= 0) cursor.getLong(bucketColumn) else 0L,
-                    bucketName = bucketNameColumn.takeIf { it >= 0 }?.let(cursor::getStringOrNull),
-                    contentUri = ContentUris.withAppendedId(
-                        // Delete/write requests only accept the typed media collections.
-                        mediaCollection(isVideo),
-                        mediaId,
-                    ).toString(),
-                    relativePath = relativePathColumn.takeIf { it >= 0 }
-                        ?.let(cursor::getStringOrNull),
+                onRow(
+                    DeviceMediaRow(
+                        mediaId = mediaId,
+                        displayName = nameColumn.takeIf { it >= 0 }?.let(cursor::getStringOrNull),
+                        mimeType = mime,
+                        capturedAt = if (takenAt > 0L) takenAt else addedAt * 1_000L,
+                        width = if (widthColumn >= 0) cursor.getInt(widthColumn) else 0,
+                        height = if (heightColumn >= 0) cursor.getInt(heightColumn) else 0,
+                        sizeBytes = if (sizeColumn >= 0) cursor.getLong(sizeColumn) else 0L,
+                        isVideo = isVideo,
+                        durationSeconds = if (isVideo && durationMillis > 0L) {
+                            (durationMillis / 1_000L).toInt()
+                        } else {
+                            null
+                        },
+                        bucketId = if (bucketColumn >= 0) cursor.getLong(bucketColumn) else 0L,
+                        bucketName = bucketNameColumn.takeIf { it >= 0 }
+                            ?.let(cursor::getStringOrNull),
+                        contentUri = ContentUris.withAppendedId(
+                            // Delete/write requests only accept the typed media collections.
+                            mediaCollection(isVideo),
+                            mediaId,
+                        ).toString(),
+                        relativePath = relativePathColumn.takeIf { it >= 0 }
+                            ?.let(cursor::getStringOrNull),
+                    ),
                 )
+                count++
             }
         }
-        return rows
     }
 
     companion object {
-        /** Upper bound for one phase-two scan; paging arrives with Room in a later phase. */
-        const val MAX_PHOTOS = 8_000
-        const val MAX_ALBUMS = 40
+        /** Rows published per page while a large device library is scanned. */
+        const val PAGE_SIZE = 600
+        const val MAX_PHOTOS = 20_000
+        const val MAX_ALBUMS = 200
     }
 }
 
