@@ -9,6 +9,8 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <!-- Only used to download the optional on-device AI model; photos are never uploaded. -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".PhotidyApplication"

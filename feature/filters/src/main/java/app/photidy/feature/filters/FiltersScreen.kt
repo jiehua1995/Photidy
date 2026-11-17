@@ -27,8 +27,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.photidy.core.data.AiModelState
 import app.photidy.core.designsystem.components.PhotidyChip
 import app.photidy.core.designsystem.components.PhotidyPrimaryButton
+import app.photidy.core.designsystem.components.PhotidyProgressLine
 import app.photidy.core.designsystem.components.PhotidyScreen
 import app.photidy.core.designsystem.components.PhotidySectionHeader
 import app.photidy.core.designsystem.components.PhotidySegment
@@ -42,6 +44,7 @@ import app.photidy.core.designsystem.theme.PhotidyWidthClass
 import app.photidy.core.designsystem.theme.rememberPhotidyWidthClass
 import app.photidy.core.localization.AlbumNames
 import app.photidy.core.localization.R as LocR
+import app.photidy.core.model.AiTag
 import app.photidy.core.model.Album
 import app.photidy.core.model.DateRangeFilter
 import app.photidy.core.model.MediaFilter
@@ -76,6 +79,7 @@ fun FiltersRoute(
         onDateRangeSelected = viewModel::selectDateRange,
         onSortSelected = viewModel::selectSort,
         onSmartSelected = viewModel::selectSmart,
+        onAiSelected = viewModel::selectAiTag,
         onUnorganizedOnlyChanged = viewModel::setUnorganizedOnly,
         modifier = modifier,
     )
@@ -92,6 +96,7 @@ fun FiltersScreen(
     onDateRangeSelected: (DateRangeFilter) -> Unit,
     onSortSelected: (PhotoSort) -> Unit,
     onSmartSelected: (SmartFilter) -> Unit,
+    onAiSelected: (AiTag?) -> Unit,
     onUnorganizedOnlyChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -147,6 +152,7 @@ fun FiltersScreen(
                             AlbumSection(state, onAlbumSelected)
                             TimeSection(state.filter, onDateRangeSelected)
                             SmartSection(state.filter, onSmartSelected)
+                            AiSection(state, onAiSelected)
                         }
                         Column(
                             modifier = Modifier.weight(1f),
@@ -168,6 +174,7 @@ fun FiltersScreen(
                         MediaSection(state.filter, onMediaSelected)
                         TimeSection(state.filter, onDateRangeSelected)
                         SmartSection(state.filter, onSmartSelected)
+                        AiSection(state, onAiSelected)
                         SortSection(state.filter, onSortSelected)
                         StatusSection(state.filter, onUnorganizedOnlyChanged)
                     }
@@ -271,6 +278,79 @@ private fun SmartSection(
             )
         }
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AiSection(
+    state: FiltersUiState,
+    onAiSelected: (AiTag?) -> Unit,
+) {
+    val ready = state.aiEnabled &&
+        state.aiModel is AiModelState.Ready &&
+        state.hasDevicePhotos
+
+    FilterPanel(title = stringResource(LocR.string.filters_ai_title)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+            verticalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+        ) {
+            PhotidyChip(
+                label = stringResource(LocR.string.filters_ai_none),
+                selected = state.filter.aiTag == null,
+                onClick = { onAiSelected(null) },
+                enabled = ready,
+            )
+            AiTag.entries.forEach { tag ->
+                PhotidyChip(
+                    label = stringResource(aiTagLabelRes(tag)),
+                    selected = state.filter.aiTag == tag,
+                    onClick = { onAiSelected(tag) },
+                    enabled = ready,
+                )
+            }
+        }
+        Spacer(Modifier.height(PhotidySpacing.xs))
+        when {
+            !state.aiEnabled -> AiHint(LocR.string.filters_ai_disabled_hint)
+            state.aiModel is AiModelState.Failed -> AiHint(LocR.string.filters_ai_failed_hint)
+            state.aiModel !is AiModelState.Ready -> AiHint(LocR.string.filters_ai_missing_hint)
+            !state.hasDevicePhotos -> AiHint(LocR.string.filters_ai_demo_hint)
+            state.aiProgress.analyzing && state.aiProgress.total > 0 -> {
+                Text(
+                    text = stringResource(
+                        LocR.string.filters_ai_progress,
+                        state.aiProgress.done,
+                        state.aiProgress.total,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Theme.colors.textSecondary,
+                )
+                Spacer(Modifier.height(PhotidySpacing.xxs))
+                PhotidyProgressLine(
+                    progress = state.aiProgress.done.toFloat() / state.aiProgress.total,
+                )
+            }
+            else -> AiHint(LocR.string.filters_ai_hint)
+        }
+    }
+}
+
+@Composable
+private fun AiHint(res: Int) {
+    Text(
+        text = stringResource(res),
+        style = MaterialTheme.typography.bodySmall,
+        color = Theme.colors.textTertiary,
+    )
+}
+
+private fun aiTagLabelRes(tag: AiTag): Int = when (tag) {
+    AiTag.FOOD -> LocR.string.filters_ai_food
+    AiTag.PET -> LocR.string.filters_ai_pet
+    AiTag.DOCUMENT -> LocR.string.filters_ai_document
+    AiTag.NATURE -> LocR.string.filters_ai_nature
+    AiTag.LANDMARK -> LocR.string.filters_ai_landmark
 }
 
 @Composable
@@ -397,6 +477,7 @@ private fun FiltersScreenPreview() {
             onDateRangeSelected = {},
             onSortSelected = {},
             onSmartSelected = {},
+            onAiSelected = {},
             onUnorganizedOnlyChanged = {},
         )
     }

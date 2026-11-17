@@ -3,6 +3,7 @@ package app.photidy.core.data
 import android.content.IntentSender
 import android.net.Uri
 import app.photidy.core.model.Album
+import app.photidy.core.model.AiTag
 import app.photidy.core.model.GestureAction
 import app.photidy.core.model.LibraryMode
 import app.photidy.core.model.LibrarySnapshot
@@ -283,6 +284,26 @@ class PhotoRepository(
             deleteIds.forEach { id ->
                 val current = snapshot.states.getValue(id)
                 states = states + (id to current.copy(decision = PhotoDecision.KEPT))
+            }
+            snapshot.copy(states = states)
+        }
+    }
+
+    /**
+     * Stores coarse on-device labels for the photos that were just analyzed. [analyzedIds]
+     * includes photos without a match so they are not decoded again next time.
+     */
+    suspend fun saveAiTags(
+        analyzedIds: Set<String>,
+        tagsByPhoto: Map<String, List<AiTag>>,
+    ) {
+        if (analyzedIds.isEmpty()) return
+        store.update { snapshot ->
+            var states = snapshot.states
+            analyzedIds.forEach { id ->
+                val current = states[id] ?: PhotoState.Initial
+                val tags = tagsByPhoto[id].orEmpty().distinct()
+                states = states + (id to current.copy(aiTags = tags, aiAnalyzed = true))
             }
             snapshot.copy(states = states)
         }

@@ -36,6 +36,7 @@ data class PhotoFilter(
     val sort: PhotoSort = PhotoSort.NEWEST_FIRST,
     val smart: SmartFilter = SmartFilter.NONE,
     val favoritesOnly: Boolean = false,
+    val aiTag: AiTag? = null,
 ) {
     fun matches(item: PhotoWithState, now: Long): Boolean {
         val photo = item.photo
@@ -47,6 +48,7 @@ data class PhotoFilter(
         }
         if (unorganizedOnly && item.state.isReviewed) return false
         if (favoritesOnly && !item.state.favorite) return false
+        if (aiTag != null && aiTag !in item.state.aiTags) return false
         if (!isWithinDateRange(photo.capturedAt, now)) return false
         return true
     }

@@ -2,6 +2,7 @@ package app.photidy.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.photidy.core.data.AiModelState
 import app.photidy.core.data.LibraryState
 import app.photidy.core.data.PhotidyGraph
 import app.photidy.core.localization.LocaleController
@@ -31,6 +32,30 @@ class SettingsViewModel : ViewModel() {
     )
 
     val library: StateFlow<LibraryState> = photoRepository.libraryState
+
+    val aiModel: StateFlow<AiModelState> = PhotidyGraph.aiModelManager.state
+
+    /** Turning the feature on fetches the small model once; turning it off stops a download. */
+    fun setAiRecognition(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.update { it.copy(aiRecognitionEnabled = enabled) }
+            if (enabled) {
+                if (!PhotidyGraph.aiModelManager.isReady()) {
+                    PhotidyGraph.aiModelManager.download()
+                }
+            } else {
+                PhotidyGraph.aiModelManager.cancelDownload()
+            }
+        }
+    }
+
+    fun downloadAiModel() {
+        PhotidyGraph.aiModelManager.download()
+    }
+
+    fun deleteAiModel() {
+        PhotidyGraph.aiModelManager.deleteModel()
+    }
 
     fun setThemeMode(mode: ThemeMode) {
         update { it.copy(themeMode = mode) }

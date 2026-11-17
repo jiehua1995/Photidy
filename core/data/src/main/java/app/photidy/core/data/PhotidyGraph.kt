@@ -25,6 +25,12 @@ object PhotidyGraph {
     lateinit var photoRepository: PhotoRepository
         private set
 
+    lateinit var aiModelManager: AiModelManager
+        private set
+
+    lateinit var aiTagger: AiTagger
+        private set
+
     fun init(context: Context) {
         if (initialized) return
         synchronized(this) {
@@ -37,6 +43,8 @@ object PhotidyGraph {
                 mediaEditor = MediaEditor(appContext),
                 scope = scope,
             )
+            aiModelManager = AiModelManager(appContext)
+            aiTagger = AiTagger(appContext, aiModelManager)
             initialized = true
         }
     }

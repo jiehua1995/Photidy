@@ -64,6 +64,10 @@ data class PhotoState(
     val decision: PhotoDecision = PhotoDecision.UNREVIEWED,
     val favorite: Boolean = false,
     val albumOverrideId: String? = null,
+    /** Coarse labels from the optional on-device model; empty until analyzed. */
+    val aiTags: List<AiTag> = emptyList(),
+    /** True once the on-device model has looked at the photo, even without a match. */
+    val aiAnalyzed: Boolean = false,
 ) {
     val isReviewed: Boolean
         get() = decision != PhotoDecision.UNREVIEWED

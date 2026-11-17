@@ -57,11 +57,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.photidy.core.data.AiModelState
 import app.photidy.core.data.LibraryState
 import app.photidy.core.designsystem.components.PhotidyBadge
 import app.photidy.core.designsystem.components.PhotidyBadgeTone
 import app.photidy.core.designsystem.components.PhotidyChip
 import app.photidy.core.designsystem.components.PhotidyDivider
+import app.photidy.core.designsystem.components.PhotidyProgressLine
 import app.photidy.core.designsystem.components.PhotidyScreen
 import app.photidy.core.designsystem.components.PhotidySectionHeader
 import app.photidy.core.designsystem.components.PhotidySegment
@@ -87,6 +89,7 @@ import app.photidy.core.model.SwipeDirection
 import app.photidy.core.model.ThemeMode
 import app.photidy.core.model.VisualStyle
 import app.photidy.core.platform.PhotoAccess
+import kotlin.math.roundToInt
 
 @Composable
 fun SettingsRoute(
@@ -97,6 +100,7 @@ fun SettingsRoute(
     val viewModel: SettingsViewModel = viewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val library by viewModel.library.collectAsStateWithLifecycle()
+    val aiModel by viewModel.aiModel.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -111,6 +115,7 @@ fun SettingsRoute(
     SettingsScreen(
         settings = settings,
         library = library,
+        aiModel = aiModel,
         appVersion = appVersion,
         onBack = onBack,
         onThemeSelected = viewModel::setThemeMode,
@@ -125,6 +130,9 @@ fun SettingsRoute(
         onLibraryModeSelected = viewModel::selectLibraryMode,
         onRefreshLibrary = viewModel::refreshLibrary,
         onRequestAccess = { permissionLauncher.launch(PhotoAccess.requestPermissions()) },
+        onAiToggled = viewModel::setAiRecognition,
+        onDownloadAiModel = viewModel::downloadAiModel,
+        onDeleteAiModel = viewModel::deleteAiModel,
         modifier = modifier,
     )
 }
@@ -133,6 +141,7 @@ fun SettingsRoute(
 fun SettingsScreen(
     settings: AppSettings,
     library: LibraryState,
+    aiModel: AiModelState,
     appVersion: String,
     onBack: () -> Unit,
     onThemeSelected: (ThemeMode) -> Unit,
@@ -147,6 +156,9 @@ fun SettingsScreen(
     onLibraryModeSelected: (LibraryMode) -> Unit,
     onRefreshLibrary: () -> Unit,
     onRequestAccess: () -> Unit,
+    onAiToggled: (Boolean) -> Unit,
+    onDownloadAiModel: () -> Unit,
+    onDeleteAiModel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val widthClass = rememberPhotidyWidthClass()
@@ -190,6 +202,13 @@ fun SettingsScreen(
                                 onRefresh = onRefreshLibrary,
                                 onRequestAccess = onRequestAccess,
                             )
+                            AiCard(
+                                enabled = settings.aiRecognitionEnabled,
+                                state = aiModel,
+                                onToggle = onAiToggled,
+                                onDownload = onDownloadAiModel,
+                                onDelete = onDeleteAiModel,
+                            )
                             AppearanceCard(
                                 settings = settings,
                                 onThemeSelected = onThemeSelected,
@@ -229,6 +248,13 @@ fun SettingsScreen(
                             onModeSelected = onLibraryModeSelected,
                             onRefresh = onRefreshLibrary,
                             onRequestAccess = onRequestAccess,
+                        )
+                        AiCard(
+                            enabled = settings.aiRecognitionEnabled,
+                            state = aiModel,
+                            onToggle = onAiToggled,
+                            onDownload = onDownloadAiModel,
+                            onDelete = onDeleteAiModel,
                         )
                         AppearanceCard(
                             settings = settings,
@@ -359,6 +385,91 @@ private fun LibraryRow(
                 modifier = Modifier.size(18.dp),
             )
         }
+    }
+}
+
+@Composable
+private fun AiCard(
+    enabled: Boolean,
+    state: AiModelState,
+    onToggle: (Boolean) -> Unit,
+    onDownload: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    val colors = Theme.colors
+    PhotidySurface(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(PhotidySpacing.lg),
+    ) {
+        PhotidySectionHeader(title = stringResource(LocR.string.settings_ai))
+        PhotidySettingRow(
+            title = stringResource(LocR.string.settings_ai_toggle),
+            subtitle = stringResource(LocR.string.settings_ai_toggle_desc),
+            trailing = {
+                PhotidySwitch(checked = enabled, onCheckedChange = onToggle)
+            },
+        )
+        when {
+            !enabled -> Text(
+                text = stringResource(LocR.string.settings_ai_off_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.textTertiary,
+            )
+
+            state is AiModelState.Downloading -> {
+                Text(
+                    text = stringResource(
+                        LocR.string.settings_ai_downloading,
+                        (state.progress * 100).roundToInt(),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textSecondary,
+                )
+                Spacer(Modifier.height(PhotidySpacing.xs))
+                PhotidyProgressLine(progress = state.progress)
+            }
+
+            state is AiModelState.Ready -> AiStatusRow(
+                text = stringResource(LocR.string.settings_ai_ready),
+                actionLabel = stringResource(LocR.string.settings_ai_delete),
+                onAction = onDelete,
+            )
+
+            state is AiModelState.Failed -> AiStatusRow(
+                text = stringResource(LocR.string.settings_ai_failed),
+                actionLabel = stringResource(LocR.string.settings_ai_retry),
+                onAction = onDownload,
+                tint = colors.danger,
+            )
+
+            else -> AiStatusRow(
+                text = stringResource(LocR.string.settings_ai_missing),
+                actionLabel = stringResource(LocR.string.settings_ai_download),
+                onAction = onDownload,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AiStatusRow(
+    text: String,
+    actionLabel: String,
+    onAction: () -> Unit,
+    tint: Color = Theme.colors.textSecondary,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = tint,
+            modifier = Modifier.weight(1f),
+        )
+        PhotidyTextButton(
+            text = actionLabel,
+            onClick = onAction,
+            tint = Theme.colors.accent,
+        )
     }
 }
 
@@ -879,6 +990,7 @@ private fun SettingsScreenPreview() {
         SettingsScreen(
             settings = AppSettings(),
             library = LibraryState(),
+            aiModel = AiModelState.NotDownloaded,
             appVersion = "0.1.0",
             onBack = {},
             onThemeSelected = {},
@@ -893,6 +1005,9 @@ private fun SettingsScreenPreview() {
             onLibraryModeSelected = {},
             onRefreshLibrary = {},
             onRequestAccess = {},
+            onAiToggled = {},
+            onDownloadAiModel = {},
+            onDeleteAiModel = {},
         )
     }
 }

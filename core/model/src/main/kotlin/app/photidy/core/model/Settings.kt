@@ -51,4 +51,6 @@ data class AppSettings(
     val libraryMode: LibraryMode = LibraryMode.DEMO,
     /** True once the user answered the first-run "use your photos" prompt. */
     val libraryChoiceMade: Boolean = false,
+    /** Opt-in on-device model for coarse photo labels; the model is downloaded once. */
+    val aiRecognitionEnabled: Boolean = false,
 )
