@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- README 默认中文，新增英文版 `README.en.md`；技术栈、模块结构与构建流程移入 `docs/DEVELOPMENT.md`
+
 ## 1.1.0 — 2026-11-17
 
 ### Added

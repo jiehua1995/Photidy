@@ -34,6 +34,19 @@ APK 输出：`app/build/outputs/apk/debug/app-debug.apk`
 
 首次启动会显示 **Allow access** 引导卡，授予照片权限后切换到设备照片库；拒绝则保留内置演示照片库。
 
+## 技术栈
+
+| 层 | 选型 |
+| --- | --- |
+| 语言与界面 | Kotlin 2.3、Jetpack Compose、Material 3 |
+| 架构 | 多模块、Navigation Compose、Coroutines / StateFlow、ViewModel |
+| 本地存储 | DataStore（设置与当前整理快照）、MediaStore（只读媒体） |
+| 图片 | Coil（网格按目标尺寸解码缩略图） |
+| 本地 AI | TensorFlow Lite + 量化 MobileNet，可选下载、默认关闭 |
+| 构建 | Gradle Kotlin DSL、版本目录、`build-logic` 约定插件 |
+
+业务规则尽量放在 `core:model` 的纯函数里（去重分组、月份分组、统计、会话队列），因此大部分逻辑都能在没有设备的 JVM 上直接测试。所有整理状态只有 `core:data` 一个写入口，页面之间互不依赖，导航由 `app` 串联。
+
 ## 模块结构
 
 ```
@@ -116,6 +129,7 @@ photidy.keystore.keyPassword=******
 
 ## 文档
 
-- `README.md`：面向使用者的功能、下载与隐私说明
-- `docs/DEVELOPMENT.md`：本文件
+- `README.md`：面向使用者的中文说明（功能、下载、隐私）
+- `README.en.md`：面向使用者的英文说明
+- `docs/DEVELOPMENT.md`：本文件，技术细节与发布流程
 - `CHANGELOG.md`：每个版本的变更
