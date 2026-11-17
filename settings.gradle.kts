@@ -29,6 +29,7 @@ include(
     ":feature:filters",
     ":feature:review",
     ":feature:favorites",
+    ":feature:search",
     ":feature:insights",
     ":feature:settings",
     ":feature:photodetail",

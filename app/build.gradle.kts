@@ -89,6 +89,7 @@ dependencies {
     implementation(project(":feature:filters"))
     implementation(project(":feature:review"))
     implementation(project(":feature:favorites"))
+    implementation(project(":feature:search"))
     implementation(project(":feature:insights"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:photodetail"))

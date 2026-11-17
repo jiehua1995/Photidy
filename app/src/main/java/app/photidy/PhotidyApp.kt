@@ -39,6 +39,7 @@ import app.photidy.feature.insights.InsightsRoute
 import app.photidy.feature.organizer.OrganizerRoute
 import app.photidy.feature.photodetail.PhotoDetailRoute
 import app.photidy.feature.review.ReviewRoute
+import app.photidy.feature.search.SearchRoute
 import app.photidy.feature.settings.SettingsRoute
 
 private object Routes {
@@ -47,6 +48,7 @@ private object Routes {
     const val ORGANIZER = "organizer"
     const val REVIEW = "review"
     const val FAVORITES = "favorites"
+    const val SEARCH = "search"
     const val INSIGHTS = "insights"
     const val SETTINGS = "settings"
     const val PHOTO_DETAIL = "photo/{photoId}"
@@ -137,6 +139,7 @@ private fun PhotidyNavHost() {
                 onContinueOrganizer = { navController.navigate(Routes.ORGANIZER) },
                 onOpenReview = { navController.navigate(Routes.REVIEW) },
                 onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
+                onOpenSearch = { navController.navigate(Routes.SEARCH) },
                 onOpenInsights = { navController.navigate(Routes.INSIGHTS) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
             )
@@ -181,6 +184,13 @@ private fun PhotidyNavHost() {
                         popUpTo(Routes.HOME)
                     }
                 },
+            )
+        }
+
+        composable(Routes.SEARCH) {
+            SearchRoute(
+                onBack = { navController.popBackStack() },
+                onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
             )
         }
 

@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -76,6 +77,7 @@ fun HomeRoute(
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenSearch: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -104,6 +106,7 @@ fun HomeRoute(
         onContinueOrganizer = onContinueOrganizer,
         onOpenReview = onOpenReview,
         onOpenFavorites = onOpenFavorites,
+        onOpenSearch = onOpenSearch,
         onOpenInsights = onOpenInsights,
         onOpenSettings = onOpenSettings,
         modifier = modifier,
@@ -120,6 +123,7 @@ fun HomeScreen(
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenSearch: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -162,6 +166,11 @@ fun HomeScreen(
                         color = Theme.colors.textPrimary,
                     )
                     Spacer(Modifier.weight(1f))
+                    PhotidyIconButton(
+                        icon = Icons.Filled.Search,
+                        contentDescription = stringResource(LocR.string.cd_search),
+                        onClick = onOpenSearch,
+                    )
                     PhotidyIconButton(
                         icon = Icons.Filled.Settings,
                         contentDescription = stringResource(LocR.string.cd_settings),
@@ -589,6 +598,7 @@ private fun HomeScreenPreview() {
             onContinueOrganizer = {},
             onOpenReview = {},
             onOpenFavorites = {},
+            onOpenSearch = {},
             onOpenInsights = {},
             onOpenSettings = {},
         )

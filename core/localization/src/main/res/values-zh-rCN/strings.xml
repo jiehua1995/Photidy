@@ -137,6 +137,9 @@
     <string name="filters_smart_none">关闭</string>
     <string name="filters_smart_screenshots">截图</string>
     <string name="filters_smart_duplicates">可能重复</string>
+    <string name="filters_smart_burst">连拍</string>
+    <string name="filters_smart_long_videos">长视频</string>
+    <string name="filters_smart_large_files">大文件</string>
     <string name="filters_smart_hint">先选择一个相册。</string>
     <string name="filters_start_empty">没有符合条件的照片</string>
     <string name="filters_reset">重置筛选</string>
@@ -167,6 +170,13 @@
     <string name="favorites_title">收藏</string>
     <string name="favorites_empty_title">还没有收藏</string>
     <string name="favorites_empty_message">整理照片时点一下爱心，喜欢的照片会集中出现在这里。</string>
+
+    <!-- 搜索 -->
+    <string name="search_hint_title">搜索照片库</string>
+    <string name="search_hint_message">试试文件名、相册，或像 2026-11 这样的日期。</string>
+    <string name="search_empty_title">没有找到照片</string>
+    <string name="search_empty_message">换个更短的关键词或日期试试。</string>
+    <string name="search_placeholder">搜索照片</string>
 
     <!-- 回顾 -->
     <string name="insights_title">回顾</string>
@@ -300,6 +310,8 @@
     <!-- 无障碍描述 -->
     <string name="cd_back">返回</string>
     <string name="cd_settings">打开设置</string>
+    <string name="cd_search">搜索照片</string>
+    <string name="cd_clear_search">清空搜索</string>
     <string name="cd_change_scope">重新选择文件夹</string>
     <string name="cd_undo">撤销上一步操作</string>
     <string name="cd_photo">照片</string>

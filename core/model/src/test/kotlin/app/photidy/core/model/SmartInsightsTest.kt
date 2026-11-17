@@ -115,4 +115,78 @@ class SmartInsightsTest {
 
         assertEquals(listOf("a"), result.map { it.photo.id })
     }
+
+    @Test
+    fun `burst detection groups photos taken within three seconds`() {
+        val base = 1_700_000_000_000L
+        val photos = listOf(
+            photo("a").copy(
+                capturedAt = base,
+                albumId = "camera",
+                width = 4000,
+                height = 3000,
+            ),
+            photo("b").copy(
+                capturedAt = base + 1_000,
+                albumId = "camera",
+                width = 4000,
+                height = 3000,
+            ),
+            photo("c").copy(
+                capturedAt = base + 10_000,
+                albumId = "camera",
+                width = 4000,
+                height = 3000,
+            ),
+            photo("d").copy(
+                capturedAt = base + 10_500,
+                albumId = "travel",
+                width = 4000,
+                height = 3000,
+            ),
+        )
+
+        assertEquals(setOf("a", "b"), SmartInsights.burstIds(photos))
+    }
+
+    @Test
+    fun `burst detection ignores videos and different dimensions`() {
+        val base = 1_700_000_000_000L
+        val photos = listOf(
+            photo("v", isVideo = true).copy(capturedAt = base, albumId = "camera"),
+            photo("a").copy(capturedAt = base + 500, albumId = "camera", width = 4000),
+            photo("b").copy(capturedAt = base + 1_000, albumId = "camera", width = 2000),
+        )
+
+        assertTrue(SmartInsights.burstIds(photos).isEmpty())
+    }
+
+    @Test
+    fun `long video filter keeps videos of at least one minute`() {
+        val items = listOf(
+            PhotoWithState(photo("long", isVideo = true).copy(durationSeconds = 90)),
+            PhotoWithState(photo("short", isVideo = true).copy(durationSeconds = 15)),
+            PhotoWithState(photo("photo")),
+        )
+
+        val ids = PhotoFilter(smart = SmartFilter.LONG_VIDEOS)
+            .applyTo(items, now)
+            .mapTo(HashSet()) { it.photo.id }
+
+        assertEquals(setOf("long"), ids)
+    }
+
+    @Test
+    fun `large file filter keeps items over twenty megabytes`() {
+        val items = listOf(
+            PhotoWithState(photo("small", sizeBytes = 5_000_000)),
+            PhotoWithState(photo("big", sizeBytes = 21L * 1024 * 1024)),
+        )
+
+        val ids = PhotoFilter(smart = SmartFilter.LARGE_FILES)
+            .applyTo(items, now)
+            .mapTo(HashSet()) { it.photo.id }
+
+        assertEquals(setOf("big"), ids)
+    }
 }

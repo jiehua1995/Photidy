@@ -60,6 +60,12 @@ data class PhotoFilter(
                 val ids = SmartInsights.duplicateIds(filtered.map { it.photo })
                 filtered.filter { it.photo.id in ids }
             }
+            SmartFilter.BURST_SHOTS -> {
+                val ids = SmartInsights.burstIds(filtered.map { it.photo })
+                filtered.filter { it.photo.id in ids }
+            }
+            SmartFilter.LONG_VIDEOS -> filtered.filter { SmartInsights.isLongVideo(it.photo) }
+            SmartFilter.LARGE_FILES -> filtered.filter { SmartInsights.isLargeFile(it.photo) }
         }
         return when (sort) {
             PhotoSort.NEWEST_FIRST -> filtered.sortedByDescending { it.photo.capturedAt }

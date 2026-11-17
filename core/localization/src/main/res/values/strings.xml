@@ -137,6 +137,9 @@
     <string name="filters_smart_none">Off</string>
     <string name="filters_smart_screenshots">Screenshots</string>
     <string name="filters_smart_duplicates">Possible duplicates</string>
+    <string name="filters_smart_burst">Burst shots</string>
+    <string name="filters_smart_long_videos">Long videos</string>
+    <string name="filters_smart_large_files">Large files</string>
     <string name="filters_smart_hint">Pick a folder first.</string>
     <string name="filters_start_empty">No photos match</string>
     <string name="filters_reset">Reset filters</string>
@@ -167,6 +170,13 @@
     <string name="favorites_title">Favorites</string>
     <string name="favorites_empty_title">No favorites yet</string>
     <string name="favorites_empty_message">Tap the heart while tidying and the photos you love gather here.</string>
+
+    <!-- Search -->
+    <string name="search_hint_title">Search your library</string>
+    <string name="search_hint_message">Try a file name, an album, or a date like 2026-11.</string>
+    <string name="search_empty_title">No matching photos</string>
+    <string name="search_empty_message">Try a shorter word or a different month.</string>
+    <string name="search_placeholder">Search photos</string>
 
     <!-- Insights -->
     <string name="insights_title">Look back</string>
@@ -310,6 +320,8 @@
     <!-- Content descriptions -->
     <string name="cd_back">Go back</string>
     <string name="cd_settings">Open settings</string>
+    <string name="cd_search">Search photos</string>
+    <string name="cd_clear_search">Clear search</string>
     <string name="cd_change_scope">Choose a different folder</string>
     <string name="cd_undo">Undo last action</string>
     <string name="cd_photo">Photo</string>

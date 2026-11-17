@@ -250,6 +250,9 @@ private fun SmartSection(
                     SmartFilter.SCREENSHOTS -> stringResource(LocR.string.filters_smart_screenshots)
                     SmartFilter.POSSIBLE_DUPLICATES ->
                         stringResource(LocR.string.filters_smart_duplicates)
+                    SmartFilter.BURST_SHOTS -> stringResource(LocR.string.filters_smart_burst)
+                    SmartFilter.LONG_VIDEOS -> stringResource(LocR.string.filters_smart_long_videos)
+                    SmartFilter.LARGE_FILES -> stringResource(LocR.string.filters_smart_large_files)
                 }
                 PhotidyChip(
                     label = label,
