@@ -80,8 +80,8 @@ feature/
 发版前修改：
 
 ```properties
-photidy.versionCode=10
-photidy.versionName=1.0.0
+photidy.versionCode=11
+photidy.versionName=1.1.0
 ```
 
 签名通过仓库 Secrets 注入；未配置时自动回退 debug 签名（产物名带 `-debug-signed`，仅供测试）：

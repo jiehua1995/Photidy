@@ -58,6 +58,7 @@ import app.photidy.core.designsystem.theme.PhotidySpacing
 import app.photidy.core.designsystem.theme.PhotidyTheme as Theme
 import app.photidy.core.designsystem.theme.PhotidyWidthClass
 import app.photidy.core.designsystem.theme.rememberPhotidyWidthClass
+import app.photidy.core.localization.AlbumNames
 import app.photidy.core.localization.PhotidyFormatters
 import app.photidy.core.localization.R as LocR
 import app.photidy.core.model.AlbumUsage
@@ -698,7 +699,7 @@ private fun AlbumBar(
     Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = album.title ?: stringResource(LocR.string.insights_unknown_album),
+                text = album.title ?: stringResource(AlbumNames.nameRes(album.albumId)),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textPrimary,
                 modifier = Modifier.weight(1f),
