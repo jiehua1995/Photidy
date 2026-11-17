@@ -17,6 +17,14 @@ data class SessionStats(
     val favorites: Int,
 )
 
+/** Storage share of one album, used by the insights ranking. */
+data class AlbumUsage(
+    val albumId: String,
+    val title: String?,
+    val count: Int,
+    val bytes: Long,
+)
+
 data class InsightsSummary(
     val totalPhotos: Int = 0,
     val organizedCount: Int = 0,
@@ -25,6 +33,12 @@ data class InsightsSummary(
     val monthly: List<MonthCount> = emptyList(),
     val session: SessionStats? = null,
     val reclaimBytes: Long = 0L,
+    val storageBytes: Long = 0L,
+    val videoCount: Int = 0,
+    val screenshotCount: Int = 0,
+    val largestAlbums: List<AlbumUsage> = emptyList(),
+    val duplicateGroupCount: Int = 0,
+    val duplicateReclaimBytes: Long = 0L,
 ) {
     val organizedRatio: Float
         get() = if (totalPhotos == 0) 0f else organizedCount.toFloat() / totalPhotos
@@ -63,6 +77,20 @@ object InsightsCalculator {
             )
         }
 
+        val duplicateGroups = DuplicateFinder.pendingGroups(photos)
+        val largestAlbums = photos
+            .groupBy { it.photo.albumId }
+            .map { (albumId, members) ->
+                AlbumUsage(
+                    albumId = albumId,
+                    title = members.firstNotNullOfOrNull { it.photo.albumTitle },
+                    count = members.size,
+                    bytes = members.sumOf { it.photo.sizeBytes },
+                )
+            }
+            .sortedByDescending { it.bytes }
+            .take(MAX_ALBUM_ROWS)
+
         return InsightsSummary(
             totalPhotos = photos.size,
             organizedCount = photos.count { it.state.isReviewed },
@@ -71,6 +99,14 @@ object InsightsCalculator {
             monthly = monthly,
             session = sessionStats,
             reclaimBytes = deleteItems.sumOf { it.photo.sizeBytes },
+            storageBytes = photos.sumOf { it.photo.sizeBytes },
+            videoCount = photos.count { it.photo.isVideo },
+            screenshotCount = photos.count { SmartInsights.isScreenshot(it.photo) },
+            largestAlbums = largestAlbums,
+            duplicateGroupCount = duplicateGroups.size,
+            duplicateReclaimBytes = duplicateGroups.sumOf { it.reclaimableBytes },
         )
     }
+
+    private const val MAX_ALBUM_ROWS = 5
 }

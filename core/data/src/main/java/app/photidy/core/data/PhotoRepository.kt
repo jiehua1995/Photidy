@@ -255,6 +255,21 @@ class PhotoRepository(
         }
     }
 
+    /** Applies the deletion flag to several photos in one write. */
+    suspend fun markManyForDeletion(photoIds: Set<String>) {
+        if (photoIds.isEmpty()) return
+        store.update { snapshot ->
+            var states = snapshot.states
+            photoIds.forEach { id ->
+                val current = states[id] ?: PhotoState.Initial
+                if (current.decision != PhotoDecision.DELETE_CANDIDATE) {
+                    states = states + (id to current.copy(decision = PhotoDecision.DELETE_CANDIDATE))
+                }
+            }
+            if (states == snapshot.states) snapshot else snapshot.copy(states = states)
+        }
+    }
+
     suspend fun markAsKept(photoId: String) {
         updateState(photoId) { current ->
             current.copy(decision = PhotoDecision.KEPT)

@@ -32,6 +32,7 @@ import app.photidy.core.designsystem.theme.PhotidyTheme
 import app.photidy.core.localization.LocaleController
 import app.photidy.core.model.AppSettings
 import app.photidy.core.model.ThemeMode
+import app.photidy.feature.duplicates.DuplicatesRoute
 import app.photidy.feature.favorites.FavoritesRoute
 import app.photidy.feature.filters.FiltersRoute
 import app.photidy.feature.home.HomeRoute
@@ -41,6 +42,7 @@ import app.photidy.feature.photodetail.PhotoDetailRoute
 import app.photidy.feature.review.ReviewRoute
 import app.photidy.feature.search.SearchRoute
 import app.photidy.feature.settings.SettingsRoute
+import app.photidy.feature.timeline.TimelineRoute
 
 private object Routes {
     const val HOME = "home"
@@ -48,6 +50,8 @@ private object Routes {
     const val ORGANIZER = "organizer"
     const val REVIEW = "review"
     const val FAVORITES = "favorites"
+    const val TIMELINE = "timeline"
+    const val DUPLICATES = "duplicates"
     const val SEARCH = "search"
     const val INSIGHTS = "insights"
     const val SETTINGS = "settings"
@@ -139,6 +143,7 @@ private fun PhotidyNavHost() {
                 onContinueOrganizer = { navController.navigate(Routes.ORGANIZER) },
                 onOpenReview = { navController.navigate(Routes.REVIEW) },
                 onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
+                onOpenTimeline = { navController.navigate(Routes.TIMELINE) },
                 onOpenSearch = { navController.navigate(Routes.SEARCH) },
                 onOpenInsights = { navController.navigate(Routes.INSIGHTS) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
@@ -187,6 +192,17 @@ private fun PhotidyNavHost() {
             )
         }
 
+        composable(Routes.TIMELINE) {
+            TimelineRoute(
+                onBack = { navController.popBackStack() },
+                onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
+            )
+        }
+
+        composable(Routes.DUPLICATES) {
+            DuplicatesRoute(onBack = { navController.popBackStack() })
+        }
+
         composable(Routes.SEARCH) {
             SearchRoute(
                 onBack = { navController.popBackStack() },
@@ -195,7 +211,10 @@ private fun PhotidyNavHost() {
         }
 
         composable(Routes.INSIGHTS) {
-            InsightsRoute(onBack = { navController.popBackStack() })
+            InsightsRoute(
+                onBack = { navController.popBackStack() },
+                onOpenDuplicates = { navController.navigate(Routes.DUPLICATES) },
+            )
         }
 
         composable(Routes.SETTINGS) {

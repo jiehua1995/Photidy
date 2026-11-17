@@ -61,6 +61,7 @@ class PhotidyUiTest {
                     onContinueOrganizer = {},
                     onOpenReview = {},
                     onOpenFavorites = {},
+                    onOpenTimeline = {},
                     onOpenSearch = {},
                     onOpenInsights = {},
                     onOpenSettings = {},

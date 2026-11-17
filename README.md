@@ -15,7 +15,10 @@ Photidy 是一款安静、精致、隐私优先的本地照片整理应用。用
 - **本地智能筛选**：截图、可能重复、连拍、长视频、大文件，纯元数据启发式，不解码像素、不联网；范围限定在当前相册
 - **可选本地 AI 识别**：设置中显式开启后下载约 4 MB 量化小模型（TensorFlow Lite），在本机完成粗分类（食物 / 宠物 / 文档 / 自然 / 建筑），照片永不上传
 - **搜索**：按文件名、相册名与日期片段检索（`IMG1003` 也能命中 `IMG_1003`）
+- **时间线**：照片按拍摄月份分组，顶部月份芯片可快速跳转到任意月份
+- **重复照片对比**：按大小与分辨率分组，并排选出一张保留，其余加入待删除
 - **收藏与批量整理**：收藏视图独立成册；整理页可切换批量模式，多选后一次性批量保留或加入待删除
+- **回顾与洞察**：照片构成环图、每月柱状图（逐条生长）、相册占用排行与可回收空间，全部本地统计
 - **排序**：最新、最早、最大、随机（会话开始时洗牌一次，预览保持稳定）
 - **三种视觉风格**：Minimal / Liquid Glass / Fluid Cloud，效果强度可调，支持深色模式
 - **中英双语**：应用内切换（AppCompat per-app locale），进度不丢失
@@ -114,7 +117,7 @@ core/
   platform/                设备能力探测、照片权限判断
   localization/            中英文资源、语言切换、格式化
 feature/
-  home/ filters/ organizer/ review/ insights/ favorites/ search/ settings/ photodetail/
+  home/ filters/ organizer/ review/ insights/ favorites/ timeline/ duplicates/ search/ settings/ photodetail/
 ```
 
 依赖方向：`app → feature → core:designsystem → core:model/localization`，`core:data → core:model`；feature 之间不互相依赖。

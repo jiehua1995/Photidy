@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -77,6 +78,7 @@ fun HomeRoute(
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenTimeline: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -106,6 +108,7 @@ fun HomeRoute(
         onContinueOrganizer = onContinueOrganizer,
         onOpenReview = onOpenReview,
         onOpenFavorites = onOpenFavorites,
+        onOpenTimeline = onOpenTimeline,
         onOpenSearch = onOpenSearch,
         onOpenInsights = onOpenInsights,
         onOpenSettings = onOpenSettings,
@@ -123,6 +126,7 @@ fun HomeScreen(
     onContinueOrganizer: () -> Unit,
     onOpenReview: () -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenTimeline: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenInsights: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -210,6 +214,7 @@ fun HomeScreen(
                         ) {
                             Spacer(Modifier.height(PhotidySpacing.xxl))
                             FavoritesCard(state = state, onClick = onOpenFavorites)
+                            TimelineCard(state = state, onClick = onOpenTimeline)
                             ReviewCard(
                                 state = state,
                                 locale = locale,
@@ -251,11 +256,21 @@ fun HomeScreen(
                                 modifier = Modifier.weight(1f),
                             )
                         }
-                        FavoritesCard(
-                            state = state,
-                            onClick = onOpenFavorites,
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                        )
+                            horizontalArrangement = Arrangement.spacedBy(PhotidySpacing.md),
+                        ) {
+                            FavoritesCard(
+                                state = state,
+                                onClick = onOpenFavorites,
+                                modifier = Modifier.weight(1f),
+                            )
+                            TimelineCard(
+                                state = state,
+                                onClick = onOpenTimeline,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
                         LibrarySummary(state = state, locale = locale)
                     }
                 }
@@ -437,6 +452,25 @@ private fun FavoritesCard(
 }
 
 @Composable
+private fun TimelineCard(
+    state: HomeUiState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    QuickCard(
+        title = stringResource(LocR.string.home_timeline_title),
+        subtitle = pluralStringResource(
+            LocR.plurals.photo_count,
+            state.totalPhotos,
+            state.totalPhotos,
+        ),
+        icon = Icons.AutoMirrored.Filled.List,
+        onClick = onClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
 private fun ReviewCard(
     state: HomeUiState,
     locale: Locale,
@@ -598,6 +632,7 @@ private fun HomeScreenPreview() {
             onContinueOrganizer = {},
             onOpenReview = {},
             onOpenFavorites = {},
+            onOpenTimeline = {},
             onOpenSearch = {},
             onOpenInsights = {},
             onOpenSettings = {},

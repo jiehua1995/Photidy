@@ -30,6 +30,8 @@ include(
     ":feature:review",
     ":feature:favorites",
     ":feature:search",
+    ":feature:duplicates",
+    ":feature:timeline",
     ":feature:insights",
     ":feature:settings",
     ":feature:photodetail",

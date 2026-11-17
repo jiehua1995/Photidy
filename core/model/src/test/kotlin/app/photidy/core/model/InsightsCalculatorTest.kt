@@ -61,6 +61,37 @@ class InsightsCalculatorTest {
     }
 
     @Test
+    fun `storage, albums and duplicates are summarised`() {
+        val photos = listOf(
+            PhotoWithState(
+                photo("a", size = 4_000_000).copy(albumTitle = "Camera"),
+                PhotoState(favorite = true),
+            ),
+            PhotoWithState(
+                photo("b", size = 4_000_000).copy(albumTitle = "Camera"),
+            ),
+            PhotoWithState(
+                photo("c", size = 1_500_000)
+                    .copy(albumTitle = "Travel", albumId = "travel", isVideo = true),
+            ),
+            PhotoWithState(
+                photo("d", size = 1_500_000)
+                    .copy(albumTitle = "Travel", albumId = "travel"),
+            ),
+        )
+
+        val summary = InsightsCalculator.calculate(photos, session = null, now = now)
+
+        assertEquals(11_000_000L, summary.storageBytes)
+        assertEquals(1, summary.videoCount)
+        assertEquals(2, summary.largestAlbums.size)
+        assertEquals("Camera", summary.largestAlbums.first().title)
+        assertEquals(8_000_000L, summary.largestAlbums.first().bytes)
+        assertEquals(1, summary.duplicateGroupCount)
+        assertEquals(4_000_000L, summary.duplicateReclaimBytes)
+    }
+
+    @Test
     fun `session statistics use only the session queue`() {
         val photos = listOf(
             PhotoWithState(photo("a"), PhotoState(decision = PhotoDecision.KEPT)),

@@ -34,6 +34,7 @@
     <string name="home_review_title">待删除清单</string>
     <string name="home_review_subtitle_empty">还没有标记照片</string>
     <string name="home_favorites_title">收藏</string>
+    <string name="home_timeline_title">时间线</string>
     <string name="home_insights_title">回顾</string>
     <string name="home_insights_subtitle">已整理 %1$d / %2$d</string>
     <string name="home_library_label">你的照片库</string>
@@ -191,6 +192,25 @@
     <string name="search_empty_message">换个更短的关键词或日期试试。</string>
     <string name="search_placeholder">搜索照片</string>
 
+    <!-- Timeline -->
+    <string name="timeline_title">时间线</string>
+    <string name="timeline_empty_title">时间线还是空的</string>
+    <string name="timeline_empty_message">照片会按拍摄月份出现在这里。</string>
+    <string name="timeline_month_header">%2$d年%1$s</string>
+    <string name="timeline_unknown_date">未知日期</string>
+    <string name="timeline_subtitle">%1$s · %2$s</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_title">重复照片</string>
+    <string name="duplicates_subtitle">%1$s · 可回收约 %2$s</string>
+    <string name="duplicates_keep">保留</string>
+    <string name="duplicates_flag">待删除</string>
+    <string name="duplicates_apply">保留这张</string>
+    <string name="duplicates_skip">跳过</string>
+    <string name="duplicates_restore">显示已跳过的 %1$d 组</string>
+    <string name="duplicates_empty_title">没有发现重复照片</string>
+    <string name="duplicates_empty_message">按文件大小与分辨率精确匹配，不解码像素，所以很快。</string>
+
     <!-- 回顾 -->
     <string name="insights_title">回顾</string>
     <string name="insights_total">照片</string>
@@ -206,6 +226,19 @@
     <string name="insights_no_session">开始一次整理后，这里会出现你的进度。</string>
     <string name="insights_chart_empty">最近 12 个月没有照片。</string>
     <string name="insights_month_label">月份</string>
+    <string name="insights_composition">照片构成</string>
+    <string name="insights_remaining">待查看</string>
+    <string name="insights_monthly_peak">最多：%1$s · %2$d 张</string>
+    <string name="insights_storage">存储</string>
+    <string name="insights_storage_albums">最占空间的相册</string>
+    <string name="insights_storage_empty">还没有可统计的文件。</string>
+    <string name="insights_unknown_album">其他</string>
+    <string name="insights_reclaim_delete">已标记待删除</string>
+    <string name="insights_duplicates">重复照片</string>
+    <string name="insights_duplicates_groups">%1$d 组 · 可回收 %2$s</string>
+    <string name="insights_duplicates_body">按文件大小与分辨率精确匹配，每组选一张保留即可。</string>
+    <string name="insights_duplicates_action">对比照片</string>
+    <string name="insights_duplicates_empty">目前没有重复分组。</string>
 
     <!-- 设置 -->
     <string name="settings_title">设置</string>
@@ -329,6 +362,21 @@
     </plurals>
     <plurals name="review_delete_done">
         <item quantity="other">已删除 %1$d 张照片</item>
+    </plurals>
+    <plurals name="timeline_months">
+        <item quantity="other">%1$d 个月</item>
+    </plurals>
+    <plurals name="duplicate_groups">
+        <item quantity="other">%1$d 组</item>
+    </plurals>
+    <plurals name="duplicate_others">
+        <item quantity="other">其余 %1$d 张将加入待删除 · 可省约 %2$s</item>
+    </plurals>
+    <plurals name="insights_videos">
+        <item quantity="other">%1$d 个视频</item>
+    </plurals>
+    <plurals name="insights_screenshots">
+        <item quantity="other">%1$d 张截图</item>
     </plurals>
 
     <!-- 无障碍描述 -->

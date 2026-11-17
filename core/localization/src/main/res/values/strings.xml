@@ -34,6 +34,7 @@
     <string name="home_review_title">Deletion list</string>
     <string name="home_review_subtitle_empty">Nothing marked yet</string>
     <string name="home_favorites_title">Favorites</string>
+    <string name="home_timeline_title">Timeline</string>
     <string name="home_insights_title">Look back</string>
     <string name="home_insights_subtitle">%1$d of %2$d organized</string>
     <string name="home_library_label">Your library</string>
@@ -191,6 +192,25 @@
     <string name="search_empty_message">Try a shorter word or a different month.</string>
     <string name="search_placeholder">Search photos</string>
 
+    <!-- Timeline -->
+    <string name="timeline_title">Timeline</string>
+    <string name="timeline_empty_title">Nothing on the timeline yet</string>
+    <string name="timeline_empty_message">Photos appear here grouped by the month they were taken.</string>
+    <string name="timeline_month_header">%1$s %2$d</string>
+    <string name="timeline_unknown_date">Unknown date</string>
+    <string name="timeline_subtitle">%1$s · %2$s</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_title">Duplicates</string>
+    <string name="duplicates_subtitle">%1$s · about %2$s reclaimable</string>
+    <string name="duplicates_keep">Keep</string>
+    <string name="duplicates_flag">To delete</string>
+    <string name="duplicates_apply">Keep this one</string>
+    <string name="duplicates_skip">Skip</string>
+    <string name="duplicates_restore">Show %1$d skipped</string>
+    <string name="duplicates_empty_title">No duplicates found</string>
+    <string name="duplicates_empty_message">Photos are matched by exact size and dimensions. Nothing is decoded, so this stays quick.</string>
+
     <!-- Insights -->
     <string name="insights_title">Look back</string>
     <string name="insights_total">Photos</string>
@@ -206,6 +226,19 @@
     <string name="insights_no_session">Start a tidy session to see your progress here.</string>
     <string name="insights_chart_empty">No photos in the last 12 months.</string>
     <string name="insights_month_label">Month</string>
+    <string name="insights_composition">Library balance</string>
+    <string name="insights_remaining">Not yet reviewed</string>
+    <string name="insights_monthly_peak">Busiest: %1$s · %2$d photos</string>
+    <string name="insights_storage">Storage</string>
+    <string name="insights_storage_albums">Largest albums</string>
+    <string name="insights_storage_empty">No files to measure yet.</string>
+    <string name="insights_unknown_album">Other</string>
+    <string name="insights_reclaim_delete">Marked for deletion</string>
+    <string name="insights_duplicates">Duplicates</string>
+    <string name="insights_duplicates_groups">%1$d groups · %2$s reclaimable</string>
+    <string name="insights_duplicates_body">Matched by exact size and dimensions. Pick a keeper for each group.</string>
+    <string name="insights_duplicates_action">Compare photos</string>
+    <string name="insights_duplicates_empty">No duplicate groups right now.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -339,6 +372,26 @@
     <plurals name="review_delete_done">
         <item quantity="one">%1$d photo deleted</item>
         <item quantity="other">%1$d photos deleted</item>
+    </plurals>
+    <plurals name="timeline_months">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <plurals name="duplicate_groups">
+        <item quantity="one">%1$d group</item>
+        <item quantity="other">%1$d groups</item>
+    </plurals>
+    <plurals name="duplicate_others">
+        <item quantity="one">%1$d other photo will be marked for deletion · about %2$s</item>
+        <item quantity="other">%1$d other photos will be marked for deletion · about %2$s</item>
+    </plurals>
+    <plurals name="insights_videos">
+        <item quantity="one">%1$d video</item>
+        <item quantity="other">%1$d videos</item>
+    </plurals>
+    <plurals name="insights_screenshots">
+        <item quantity="one">%1$d screenshot</item>
+        <item quantity="other">%1$d screenshots</item>
     </plurals>
 
     <!-- Content descriptions -->
