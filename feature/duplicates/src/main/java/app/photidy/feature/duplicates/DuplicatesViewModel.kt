@@ -25,12 +25,18 @@ data class DuplicateGroupUi(
         get() = others.sumOf { it.sizeBytes }
 }
 
+data class AppliedGroup(
+    val flaggedIds: Set<String>,
+)
+
 data class DuplicatesUiState(
     val isLoading: Boolean = true,
     val groups: List<DuplicateGroupUi> = emptyList(),
     val totalGroups: Int = 0,
     val reclaimableBytes: Long = 0L,
     val skippedCount: Int = 0,
+    /** Non-null right after a group is applied, so the screen can offer an undo. */
+    val lastApplied: AppliedGroup? = null,
 )
 
 class DuplicatesViewModel : ViewModel() {
@@ -40,12 +46,14 @@ class DuplicatesViewModel : ViewModel() {
     /** Explicit keeper per group; groups without an entry fall back to the suggestion. */
     private val selection = MutableStateFlow<Map<String, String>>(emptyMap())
     private val skipped = MutableStateFlow<Set<String>>(emptySet())
+    private val lastApplied = MutableStateFlow<AppliedGroup?>(null)
 
     val uiState: StateFlow<DuplicatesUiState> = combine(
         photoRepository.photos,
         selection,
         skipped,
-    ) { photos, selections, skippedKeys ->
+        lastApplied,
+    ) { photos, selections, skippedKeys, applied ->
         val groups = DuplicateFinder.pendingGroups(photos).map { group ->
             val key = group.photos.joinToString("+") { it.id }
             val chosen = selections[key]?.takeIf { id -> group.photos.any { it.id == id } }
@@ -61,6 +69,7 @@ class DuplicatesViewModel : ViewModel() {
             totalGroups = groups.size,
             reclaimableBytes = groups.sumOf { it.reclaimableBytes },
             skippedCount = skippedKeys.size,
+            lastApplied = applied,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -88,6 +97,16 @@ class DuplicatesViewModel : ViewModel() {
         viewModelScope.launch {
             photoRepository.markManyForDeletion(otherIds)
             selection.update { it - groupKey }
+            lastApplied.value = AppliedGroup(otherIds)
+        }
+    }
+
+    /** Reverts the last group so its photos can be compared again. */
+    fun undoLast() {
+        val applied = lastApplied.value ?: return
+        viewModelScope.launch {
+            photoRepository.clearDeleteFlags(applied.flaggedIds)
+            lastApplied.value = null
         }
     }
 }

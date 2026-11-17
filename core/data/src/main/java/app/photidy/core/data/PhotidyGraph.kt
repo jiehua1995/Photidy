@@ -31,6 +31,9 @@ object PhotidyGraph {
     lateinit var aiTagger: AiTagger
         private set
 
+    lateinit var aiAnalysis: AiAnalysisCoordinator
+        private set
+
     fun init(context: Context) {
         if (initialized) return
         synchronized(this) {
@@ -45,6 +48,13 @@ object PhotidyGraph {
             )
             aiModelManager = AiModelManager(appContext)
             aiTagger = AiTagger(appContext, aiModelManager)
+            aiAnalysis = AiAnalysisCoordinator(
+                photoRepository = photoRepository,
+                settingsRepository = settingsRepository,
+                aiModelManager = aiModelManager,
+                aiTagger = aiTagger,
+                scope = scope,
+            )
             initialized = true
         }
     }

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 品牌 -->
+    <string name="app_name">相片輕理</string>
+    <string name="brand_name">Photidy</string>
+    <string name="app_tagline">更安靜地整理照片。</string>
+
+    <!-- 通用 -->
+    <string name="common_back">返回</string>
+    <string name="common_close">關閉</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_done">完成</string>
+    <string name="common_remove">移除</string>
+    <string name="common_clear">清空</string>
+    <string name="common_reset">重設</string>
+    <string name="common_all">全部</string>
+    <string name="common_none">無</string>
+    <string name="common_undo">復原</string>
+    <string name="common_settings">設定</string>
+    <string name="common_photos">張照片</string>
+    <string name="common_selected">已選取 %1$d 張</string>
+    <string name="common_coming_soon">即將推出</string>
+    <string name="common_demo">示範照片庫</string>
+
+    <!-- 底部導覽 -->
+    <string name="tab_tidy">整理</string>
+    <string name="tab_photos">照片</string>
+    <string name="tab_search">搜尋</string>
+    <string name="tab_favorites">收藏</string>
+    <string name="tab_insights">回顧</string>
+
+    <!-- 首頁 -->
+    <string name="home_greeting_morning">早安。</string>
+    <string name="home_greeting_afternoon">午安。</string>
+    <string name="home_greeting_evening">晚上好。</string>
+    <string name="home_intro">給自己一點安靜的時間，整理照片。</string>
+    <string name="home_continue_title">繼續整理</string>
+    <string name="home_start_title">開始新的整理</string>
+    <string name="home_start_subtitle">挑選一小批照片，慢慢來。</string>
+    <string name="home_review_title">待刪除清單</string>
+    <string name="home_review_subtitle_empty">尚未標記任何照片</string>
+    <string name="home_favorites_title">收藏</string>
+    <string name="home_timeline_title">時間軸</string>
+    <string name="home_insights_title">回顧</string>
+    <string name="home_insights_subtitle">已整理 %1$d / %2$d</string>
+    <string name="home_library_label">你的照片庫</string>
+    <string name="home_library_source_demo">示範照片</string>
+    <string name="home_library_source_device">本機照片</string>
+    <string name="home_library_prompt_title">使用你自己的照片</string>
+    <string name="home_library_prompt_body">Photidy 可以整理這支手機上的照片，所有內容都留在你的裝置上。</string>
+    <string name="home_library_prompt_action">允許存取</string>
+    <string name="home_library_prompt_keep_demo">繼續使用示範照片</string>
+    <string name="home_library_prompt_denied">未取得存取權限。你可以再試一次，或繼續使用示範照片。</string>
+    <string name="home_stat_photos">照片</string>
+    <string name="home_stat_organized">已整理</string>
+    <string name="home_stat_favorites">收藏</string>
+    <string name="home_primary_cta">開始</string>
+    <string name="home_secondary_cta">繼續</string>
+    <string name="home_session_complete_title">上一次的整理完成了</string>
+    <string name="home_session_complete_subtitle">隨時都可以開始新的一次整理。</string>
+
+    <!-- 整理頁 -->
+    <string name="organizer_title">整理</string>
+    <string name="organizer_progress">%1$d / %2$d</string>
+    <string name="organizer_swipe_hint">滑動照片，或使用下方按鈕。</string>
+    <string name="organizer_action_delete">待刪除</string>
+    <string name="organizer_action_keep">保留</string>
+    <string name="organizer_action_favorite">收藏</string>
+    <string name="organizer_action_album">相簿</string>
+    <string name="organizer_action_skip">略過</string>
+    <string name="organizer_action_none">不動作</string>
+    <string name="organizer_undo_done">已復原上一步操作。</string>
+    <string name="organizer_move_failed">無法移動這張照片。</string>
+    <string name="organizer_move_done">已移動到 %1$s。</string>
+    <string name="organizer_complete_title">整理完成。</string>
+    <string name="organizer_complete_kept">保留 %1$d 張</string>
+    <string name="organizer_complete_delete">待刪除 %1$d 張</string>
+    <string name="organizer_complete_favorites">收藏 %1$d 張</string>
+    <string name="organizer_complete_review">查看待刪除清單</string>
+    <string name="organizer_complete_home">回到首頁</string>
+    <string name="organizer_complete_undo">復原上一步</string>
+    <string name="organizer_empty_title">目前沒有可整理的照片</string>
+    <string name="organizer_empty_message">先選擇想整理的照片吧。</string>
+    <string name="organizer_empty_action">選擇照片</string>
+    <string name="organizer_album_picker_title">加入相簿</string>
+    <string name="organizer_album_picker_subtitle">為這張照片選一個去處。</string>
+    <string name="organizer_up_next">接下來</string>
+    <string name="organizer_session_stats">本次整理</string>
+    <string name="organizer_session_acted">已看過 %1$d 張</string>
+    <string name="organizer_session_remaining">還剩 %1$d 張</string>
+    <string name="organizer_card_detail">詳細資訊</string>
+    <string name="organizer_batch">批次</string>
+    <string name="organizer_batch_done">完成</string>
+    <string name="organizer_batch_hint">點選照片，再批次處理。</string>
+    <string name="organizer_batch_delete">待刪除 %1$d 張</string>
+    <string name="organizer_batch_keep">保留 %1$d 張</string>
+    <string name="organizer_batch_empty">這一批已經處理完</string>
+    <string name="organizer_batch_empty_message">離開批次模式，繼續逐張整理。</string>
+
+    <!-- 手勢動作說明 -->
+    <string name="action_delete_desc">加入待刪除清單</string>
+    <string name="action_keep_desc">保留並標記為已整理</string>
+    <string name="action_favorite_desc">收藏並保留</string>
+    <string name="action_album_desc">加入指定相簿</string>
+    <string name="action_skip_desc">不做決定，直接略過</string>
+    <string name="action_none_desc">不執行任何動作</string>
+
+    <!-- 手勢設定 -->
+    <string name="settings_gestures_title">手勢</string>
+    <string name="settings_gestures_desc">為每個滑動方向指定動作。</string>
+    <string name="settings_gestures_album_hint">每次執行相簿動作時，都會先詢問目標相簿。</string>
+    <string name="gesture_left">左滑</string>
+    <string name="gesture_right">右滑</string>
+    <string name="gesture_up">上滑</string>
+    <string name="gesture_down">下滑</string>
+    <string name="settings_gestures_reset">恢復預設</string>
+    <string name="settings_gesture_demo_title">手勢測試</string>
+    <string name="settings_gesture_demo_hint">滑動這張卡片，感受互動。</string>
+    <string name="settings_gesture_demo_result">將執行：%1$s</string>
+    <string name="settings_gesture_demo_none">此方向尚未綁定動作。</string>
+
+    <!-- 篩選 -->
+    <string name="filters_title">選擇照片</string>
+    <string name="filters_album">相簿</string>
+    <string name="filters_album_all">所有相簿</string>
+    <string name="filters_media">媒體類型</string>
+    <string name="filters_media_all">照片與影片</string>
+    <string name="filters_media_photos">照片</string>
+    <string name="filters_media_videos">影片</string>
+    <string name="filters_date">時間範圍</string>
+    <string name="filters_date_all">所有時間</string>
+    <string name="filters_date_30">最近 30 天</string>
+    <string name="filters_date_90">最近 90 天</string>
+    <string name="filters_date_year">今年</string>
+    <string name="filters_sort">排序</string>
+    <string name="filters_sort_newest">最新優先</string>
+    <string name="filters_sort_oldest">最舊優先</string>
+    <string name="filters_sort_largest">最大優先</string>
+    <string name="filters_sort_random">隨機順序</string>
+    <string name="filters_status">整理狀態</string>
+    <string name="filters_status_all">全部照片</string>
+    <string name="filters_status_unreviewed">僅未整理</string>
+    <string name="filters_smart">智慧篩選</string>
+    <string name="filters_smart_none">關閉</string>
+    <string name="filters_smart_screenshots">截圖</string>
+    <string name="filters_smart_duplicates">可能重複</string>
+    <string name="filters_smart_burst">連拍</string>
+    <string name="filters_smart_long_videos">長影片</string>
+    <string name="filters_smart_large_files">大型檔案</string>
+    <string name="filters_smart_hint">先選擇一個相簿。</string>
+    <string name="filters_ai_title">AI 辨識</string>
+    <string name="filters_ai_none">關閉</string>
+    <string name="filters_ai_food">食物</string>
+    <string name="filters_ai_pet">寵物</string>
+    <string name="filters_ai_document">文件</string>
+    <string name="filters_ai_nature">自然</string>
+    <string name="filters_ai_landmark">建築</string>
+    <string name="filters_ai_disabled_hint">在設定中開啟 AI 辨識後即可使用。</string>
+    <string name="filters_ai_missing_hint">模型尚未下載，請到設定中下載。</string>
+    <string name="filters_ai_failed_hint">模型下載失敗，請到設定中重試。</string>
+    <string name="filters_ai_demo_hint">AI 辨識只會分析這台裝置上的照片。</string>
+    <string name="filters_ai_hint">在本機背景執行，新照片會自動標記。</string>
+    <string name="filters_ai_progress">正在辨識 %1$d / %2$d</string>
+    <string name="filters_start_empty">沒有符合條件的照片</string>
+    <string name="filters_reset">重設篩選</string>
+    <string name="filters_recent">最近使用</string>
+    <string name="filters_recent_all">全部照片</string>
+
+    <!-- 待刪除清單 -->
+    <string name="review_title">待刪除清單</string>
+    <string name="review_select">選取</string>
+    <string name="review_cancel_selection">取消</string>
+    <string name="review_select_all">全選</string>
+    <string name="review_deselect_all">取消全選</string>
+    <string name="review_remove_selected">移出 %1$d 張</string>
+    <string name="review_delete_selected">刪除 %1$d 張</string>
+    <string name="review_clear_all">清空清單</string>
+    <string name="review_empty_title">待刪除清單是空的</string>
+    <string name="review_empty_message">標記為待刪除的照片會集中在這裡，不會刪除任何檔案。</string>
+    <string name="review_empty_action">開始整理</string>
+    <string name="review_clear_title">清空待刪除清單？</string>
+    <string name="review_safety_note">在系統請你確認之前，不會刪除任何內容。</string>
+    <string name="review_delete_confirm_title">從裝置刪除？</string>
+    <string name="review_delete_confirm_message">只有存放在這台裝置上的照片可以刪除。系統會請你再次確認，若裝置支援，項目會移至系統垃圾桶。</string>
+    <string name="review_delete_action">刪除</string>
+    <string name="review_delete_unsupported">經系統確認的刪除功能需要 Android 11 或更新版本。</string>
+    <string name="review_delete_failed">未刪除任何照片。</string>
+    <string name="review_open_photo">開啟照片</string>
+    <string name="review_selected">已選取 %1$d 張</string>
+
+    <!-- 收藏 -->
+    <string name="favorites_title">收藏</string>
+    <string name="favorites_empty_title">還沒有收藏</string>
+    <string name="favorites_empty_message">整理時輕觸愛心，喜歡的照片就會集中在這裡。</string>
+
+    <!-- 搜尋 -->
+    <string name="search_hint_title">搜尋你的照片庫</string>
+    <string name="search_hint_message">試試檔案名稱、相簿，或像 2026-11 這樣的日期。</string>
+    <string name="search_empty_title">沒有找到照片</string>
+    <string name="search_empty_message">換個更短的關鍵字或日期試試。</string>
+    <string name="search_placeholder">搜尋照片</string>
+
+    <!-- 時間軸 -->
+    <string name="timeline_title">時間軸</string>
+    <string name="timeline_empty_title">時間軸還是空的</string>
+    <string name="timeline_empty_message">照片會依拍攝月份出現在這裡。</string>
+    <string name="timeline_month_header">%2$d年%1$s</string>
+    <string name="timeline_unknown_date">未知日期</string>
+    <string name="timeline_subtitle">%1$s · %2$s</string>
+
+    <!-- 重複照片 -->
+    <string name="duplicates_title">重複照片</string>
+    <string name="duplicates_subtitle">%1$s · 可回收約 %2$s</string>
+    <string name="duplicates_keep">保留</string>
+    <string name="duplicates_flag">待刪除</string>
+    <string name="duplicates_apply">保留這張</string>
+    <string name="duplicates_skip">略過</string>
+    <string name="duplicates_restore">顯示已略過的 %1$d 組</string>
+    <string name="duplicates_empty_title">沒有發現重複照片</string>
+    <string name="duplicates_empty_message">依檔案大小與解析度精確比對，不解碼像素，所以速度很快。</string>
+
+    <!-- 回顧 -->
+    <string name="insights_title">回顧</string>
+    <string name="insights_total">照片</string>
+    <string name="insights_organized">已整理</string>
+    <string name="insights_delete">待刪除</string>
+    <string name="insights_favorites">收藏</string>
+    <string name="insights_completion">整理進度</string>
+    <string name="insights_monthly">每月照片</string>
+    <string name="insights_session">本次整理</string>
+    <string name="insights_session_acted">%1$d / %2$d 已檢視</string>
+    <string name="insights_session_delete">標記待刪除 %1$d 張</string>
+    <string name="insights_session_favorites">收藏 %1$d 張</string>
+    <string name="insights_no_session">開始一次整理後，這裡會顯示你的進度。</string>
+    <string name="insights_chart_empty">最近 12 個月沒有照片。</string>
+    <string name="insights_month_label">月份</string>
+    <string name="insights_composition">照片組成</string>
+    <string name="insights_remaining">尚未檢視</string>
+    <string name="insights_monthly_peak">最多：%1$s · %2$d 張</string>
+    <string name="insights_storage">儲存空間</string>
+    <string name="insights_storage_albums">最佔空間的相簿</string>
+    <string name="insights_storage_empty">還沒有可統計的檔案。</string>
+    <string name="insights_unknown_album">其他</string>
+    <string name="insights_reclaim_delete">已標記待刪除</string>
+    <string name="insights_duplicates">重複照片</string>
+    <string name="insights_duplicates_groups">%1$d 組 · 可回收 %2$s</string>
+    <string name="insights_duplicates_body">依檔案大小與解析度精確比對，每組選一張保留即可。</string>
+    <string name="insights_duplicates_action">比較照片</string>
+    <string name="insights_duplicates_empty">目前沒有重複群組。</string>
+
+    <!-- 設定 -->
+    <string name="settings_title">設定</string>
+    <string name="settings_appearance">外觀</string>
+    <string name="settings_theme">主題</string>
+    <string name="settings_theme_system">跟隨系統</string>
+    <string name="settings_theme_light">淺色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_style">視覺風格</string>
+    <string name="settings_style_minimal">極簡</string>
+    <string name="settings_style_glass">液態玻璃</string>
+    <string name="settings_style_cloud">流體雲</string>
+    <string name="settings_style_minimal_desc">沉穩純色，輕盈省電。</string>
+    <string name="settings_style_glass_desc">柔和半透明與細膩邊緣。</string>
+    <string name="settings_style_cloud_desc">緩慢流動的光影，安靜而有生命。</string>
+    <string name="settings_intensity">效果強度</string>
+    <string name="settings_intensity_value">%1$d%%</string>
+    <string name="settings_animation">動畫風格</string>
+    <string name="settings_animation_gentle">輕柔</string>
+    <string name="settings_animation_natural">自然</string>
+    <string name="settings_animation_lively">靈動</string>
+    <string name="settings_animations">動畫</string>
+    <string name="settings_animations_desc">關閉後，體驗會更安靜、靜止。</string>
+    <string name="settings_haptics">觸覺回饋</string>
+    <string name="settings_haptics_desc">操作完成時輕輕一震。</string>
+    <string name="settings_language">語言</string>
+    <string name="settings_language_system">跟隨系統</string>
+    <string name="settings_language_zh">简体中文</string>
+    <string name="settings_language_zh_tw">繁體中文</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_ja">日本語</string>
+    <string name="settings_language_ko">한국어</string>
+    <string name="settings_language_es">Español</string>
+    <string name="settings_language_fr">Français</string>
+    <string name="settings_language_it">Italiano</string>
+    <string name="settings_library">照片來源</string>
+    <string name="settings_library_device">本機照片</string>
+    <string name="settings_library_demo">示範照片庫</string>
+    <string name="settings_library_demo_subtitle">內建示範照片，讓你體驗 Photidy。</string>
+    <string name="settings_library_no_access">照片存取權限已關閉</string>
+    <string name="settings_library_scanning">正在掃描…</string>
+    <string name="settings_library_rescan">重新掃描</string>
+    <string name="settings_library_allow">允許存取</string>
+    <string name="settings_ai">本機 AI 辨識</string>
+    <string name="settings_ai_toggle">啟用 AI 辨識</string>
+    <string name="settings_ai_toggle_desc">首次啟用會下載一個小型模型，之後辨識完全在這台裝置上執行，照片絕不會上傳。</string>
+    <string name="settings_ai_off_note">選用功能，不開啟也不影響其他整理功能。</string>
+    <string name="settings_ai_missing">模型尚未下載。</string>
+    <string name="settings_ai_downloading">正在下載 %1$d%%</string>
+    <string name="settings_ai_ready">模型已就緒 · 完全在本機執行</string>
+    <string name="settings_ai_scanning">正在辨識 %1$d / %2$d 張照片</string>
+    <string name="settings_ai_failed">下載失敗，請檢查網路連線後重試。</string>
+    <string name="settings_ai_download">下載模型</string>
+    <string name="settings_ai_retry">重試</string>
+    <string name="settings_ai_delete">刪除模型</string>
+    <string name="settings_about">關於</string>
+    <string name="settings_version">版本 %1$s</string>
+    <string name="settings_privacy_title">隱私</string>
+    <string name="settings_privacy_body">Photidy 完全在你的裝置上執行。不需要帳號，不上傳雲端，也不追蹤任何行為。只有在你授予存取權後才會讀取照片；刪除或移動照片時，一律會透過 Android 的對話框請你確認。任何內容都不會被上傳；選用的 AI 模型只需下載一次，並在本機執行。</string>
+    <string name="settings_developer_title">開發者</string>
+    <string name="settings_developer_body">由一位獨立開發者用心製作。</string>
+    <string name="settings_support_title">支持開發者</string>
+    <string name="settings_support_body">一點小小的心意，讓 Photidy 保持安靜與免費。</string>
+    <string name="settings_support_button">請我喝杯咖啡</string>
+    <string name="settings_support_coming_soon">即將推出</string>
+
+    <!-- 照片詳細資訊 -->
+    <string name="detail_title">照片</string>
+    <string name="detail_meta">資訊</string>
+    <string name="detail_date">拍攝時間</string>
+    <string name="detail_resolution">解析度</string>
+    <string name="detail_size">檔案大小</string>
+    <string name="detail_album">相簿</string>
+    <string name="detail_status">狀態</string>
+    <string name="detail_duration">長度</string>
+    <string name="detail_favorite_on">已收藏</string>
+    <string name="detail_favorite_off">未收藏</string>
+    <string name="detail_status_unreviewed">未整理</string>
+    <string name="detail_status_kept">已保留</string>
+    <string name="detail_status_delete">待刪除</string>
+    <string name="detail_action_favorite">收藏</string>
+    <string name="detail_action_unfavorite">取消收藏</string>
+    <string name="detail_action_delete">標記待刪除</string>
+    <string name="detail_action_keep">標記為已保留</string>
+    <string name="detail_action_remove_delete">移出待刪除清單</string>
+    <string name="detail_safety_note">唯讀預覽，不會變更你裝置上的任何內容。</string>
+    <string name="detail_not_found">找不到這張照片。</string>
+    <string name="detail_open_preview">輕觸放大檢視</string>
+    <string name="detail_zoom_hint">雙指縮放 · 輕觸兩下放大</string>
+
+    <!-- 相簿 -->
+    <string name="album_camera">相機</string>
+    <string name="album_travel">旅行</string>
+    <string name="album_family">家人</string>
+    <string name="album_nature">自然</string>
+    <string name="album_city">城市</string>
+    <string name="album_food">美食</string>
+    <string name="album_pets">寵物</string>
+    <string name="album_other">其他</string>
+
+    <!-- 複數 -->
+    <plurals name="photo_count">
+        <item quantity="other">%1$d 張照片</item>
+    </plurals>
+    <plurals name="photos_left">
+        <item quantity="other">還剩 %1$d 張照片</item>
+    </plurals>
+    <plurals name="photos_with_size">
+        <item quantity="other">%1$d 張照片 · %2$s</item>
+    </plurals>
+    <plurals name="start_with_photos">
+        <item quantity="other">從 %1$d 張照片開始</item>
+    </plurals>
+    <plurals name="review_summary_plural">
+        <item quantity="other">%1$d 張照片 · 約 %2$s</item>
+    </plurals>
+    <plurals name="clear_delete_message">
+        <item quantity="other">將把 %1$d 張照片移出清單，裝置上的檔案不會被刪除。</item>
+    </plurals>
+    <plurals name="reviewed_photos_message">
+        <item quantity="other">你一共看完了 %1$d 張照片。</item>
+    </plurals>
+    <plurals name="device_photos_found">
+        <item quantity="other">找到 %1$d 張照片</item>
+    </plurals>
+    <plurals name="device_photos_found_limited">
+        <item quantity="other">%1$d 張照片 · 部分存取權限</item>
+    </plurals>
+    <plurals name="review_delete_done">
+        <item quantity="other">已刪除 %1$d 張照片</item>
+    </plurals>
+    <plurals name="review_trash_notice">
+        <item quantity="other">系統垃圾桶中有 %1$d 張照片 · 還能還原約 %2$d 天</item>
+    </plurals>
+    <plurals name="review_trash_notice_unknown">
+        <item quantity="other">系統垃圾桶中有 %1$d 張照片，仍可從那裡還原。</item>
+    </plurals>
+    <plurals name="timeline_months">
+        <item quantity="other">%1$d 個月</item>
+    </plurals>
+    <plurals name="duplicate_groups">
+        <item quantity="other">%1$d 組</item>
+    </plurals>
+    <plurals name="duplicate_others">
+        <item quantity="other">其餘 %1$d 張將標記為待刪除 · 可省下約 %2$s</item>
+    </plurals>
+    <plurals name="duplicates_applied">
+        <item quantity="other">已標記 %1$d 張待刪除</item>
+    </plurals>
+    <plurals name="insights_videos">
+        <item quantity="other">%1$d 部影片</item>
+    </plurals>
+    <plurals name="insights_screenshots">
+        <item quantity="other">%1$d 張截圖</item>
+    </plurals>
+
+    <!-- 無障礙描述 -->
+    <string name="cd_back">返回</string>
+    <string name="cd_settings">開啟設定</string>
+    <string name="cd_search">搜尋照片</string>
+    <string name="cd_clear_search">清除搜尋</string>
+    <string name="cd_change_scope">選擇其他資料夾</string>
+    <string name="cd_undo">復原上一步操作</string>
+    <string name="cd_photo">照片</string>
+    <string name="cd_favorite">收藏</string>
+    <string name="cd_delete">標記為待刪除</string>
+    <string name="cd_keep">保留照片</string>
+    <string name="cd_album">加入相簿</string>
+    <string name="cd_skip">略過照片</string>
+    <string name="cd_close">關閉</string>
+    <string name="cd_select">選取照片</string>
+    <string name="cd_selected">已選取</string>
+    <string name="cd_unselected">未選取</string>
+    <string name="cd_details">檢視照片詳細資訊</string>
+    <string name="cd_start">開始整理</string>
+    <string name="cd_gesture_demo">手勢測試卡片</string>
+
+    <!-- 錯誤 -->
+    <string name="error_generic">發生問題，請稍後再試。</string>
+
+</resources>

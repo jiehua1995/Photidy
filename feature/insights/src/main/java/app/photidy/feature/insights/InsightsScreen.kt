@@ -68,7 +68,7 @@ import java.util.Locale
 
 @Composable
 fun InsightsRoute(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenDuplicates: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,7 +85,7 @@ fun InsightsRoute(
 @Composable
 fun InsightsScreen(
     state: InsightsSummary,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenDuplicates: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

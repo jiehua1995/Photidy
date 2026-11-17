@@ -579,7 +579,7 @@ private fun BatchTile(
             .background(colors.surface)
             .clickable(onClick = onClick),
     ) {
-        PhotoImage(photo = item.photo, modifier = Modifier.fillMaxSize())
+        PhotoImage(photo = item.photo, modifier = Modifier.fillMaxSize(), thumbnail = true)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -743,6 +743,7 @@ private fun UpNextPanel(
                             app.photidy.core.designsystem.artwork.PhotoImage(
                                 photo = item.photo,
                                 modifier = Modifier.fillMaxSize(),
+                                thumbnail = true,
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {

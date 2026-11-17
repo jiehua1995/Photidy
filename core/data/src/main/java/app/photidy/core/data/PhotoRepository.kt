@@ -65,6 +65,10 @@ class PhotoRepository(
     private val deviceScanning = MutableStateFlow(false)
     private val deviceAccess = MutableStateFlow(mediaLibrary.hasAccess())
     private val deviceFullAccess = MutableStateFlow(mediaLibrary.hasFullAccess())
+    private val trash = MutableStateFlow(TrashSummary())
+
+    /** Deleted media still restorable from Android's own trash. */
+    val trashed: StateFlow<TrashSummary> = trash
 
     val snapshot: Flow<LibrarySnapshot> = store.snapshot
 
@@ -120,6 +124,8 @@ class PhotoRepository(
         deviceFullAccess.value = mediaLibrary.hasFullAccess()
         if (newMode == LibraryMode.DEVICE && deviceAccess.value) {
             refreshDeviceLibrary()
+        } else if (newMode == LibraryMode.DEMO) {
+            trash.value = TrashSummary()
         }
     }
 
@@ -136,6 +142,8 @@ class PhotoRepository(
                 deviceLibrary.value = mediaLibrary.load { partial ->
                     deviceLibrary.value = partial
                 }
+                // Deletions land in Android's trash, so the count is refreshed with each scan.
+                trash.value = mediaLibrary.trashedSummary()
             } finally {
                 deviceScanning.value = false
             }
@@ -264,6 +272,21 @@ class PhotoRepository(
                 val current = states[id] ?: PhotoState.Initial
                 if (current.decision != PhotoDecision.DELETE_CANDIDATE) {
                     states = states + (id to current.copy(decision = PhotoDecision.DELETE_CANDIDATE))
+                }
+            }
+            if (states == snapshot.states) snapshot else snapshot.copy(states = states)
+        }
+    }
+
+    /** Clears the deletion flag without marking the photo as reviewed. */
+    suspend fun clearDeleteFlags(photoIds: Set<String>) {
+        if (photoIds.isEmpty()) return
+        store.update { snapshot ->
+            var states = snapshot.states
+            photoIds.forEach { id ->
+                val current = states[id] ?: return@forEach
+                if (current.decision == PhotoDecision.DELETE_CANDIDATE) {
+                    states = states + (id to current.copy(decision = PhotoDecision.UNREVIEWED))
                 }
             }
             if (states == snapshot.states) snapshot else snapshot.copy(states = states)

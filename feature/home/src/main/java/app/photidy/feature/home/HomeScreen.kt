@@ -426,6 +426,7 @@ private fun PhotoStack(photos: List<PhotoItem>) {
                 PhotoImage(
                     photo = photo,
                     modifier = Modifier.fillMaxSize(),
+                    thumbnail = true,
                 )
             }
         }

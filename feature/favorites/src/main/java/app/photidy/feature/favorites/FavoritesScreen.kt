@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FavoritesRoute(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     onSessionStarted: () -> Unit,
     modifier: Modifier = Modifier,
@@ -87,7 +87,7 @@ fun FavoritesRoute(
 @Composable
 fun FavoritesScreen(
     state: FavoritesUiState,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     onStart: () -> Unit,
     modifier: Modifier = Modifier,
@@ -212,6 +212,7 @@ private fun FavoriteTile(
         PhotoImage(
             photo = item.photo,
             modifier = Modifier.fillMaxSize(),
+            thumbnail = true,
         )
         Box(
             modifier = Modifier

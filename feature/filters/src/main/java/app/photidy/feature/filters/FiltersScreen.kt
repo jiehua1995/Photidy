@@ -81,6 +81,7 @@ fun FiltersRoute(
         onSmartSelected = viewModel::selectSmart,
         onAiSelected = viewModel::selectAiTag,
         onUnorganizedOnlyChanged = viewModel::setUnorganizedOnly,
+        onRecentSelected = viewModel::applyRecent,
         modifier = modifier,
     )
 }
@@ -98,6 +99,7 @@ fun FiltersScreen(
     onSmartSelected: (SmartFilter) -> Unit,
     onAiSelected: (AiTag?) -> Unit,
     onUnorganizedOnlyChanged: (Boolean) -> Unit,
+    onRecentSelected: (PhotoFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val widthClass = rememberPhotidyWidthClass()
@@ -149,6 +151,7 @@ fun FiltersScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(PhotidySpacing.md),
                         ) {
+                            RecentSection(state, onRecentSelected)
                             AlbumSection(state, onAlbumSelected)
                             TimeSection(state.filter, onDateRangeSelected)
                             SmartSection(state.filter, onSmartSelected)
@@ -170,6 +173,7 @@ fun FiltersScreen(
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(PhotidySpacing.md),
                     ) {
+                        RecentSection(state, onRecentSelected)
                         AlbumSection(state, onAlbumSelected)
                         MediaSection(state.filter, onMediaSelected)
                         TimeSection(state.filter, onDateRangeSelected)
@@ -214,6 +218,59 @@ fun FiltersScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
+private fun RecentSection(
+    state: FiltersUiState,
+    onRecentSelected: (PhotoFilter) -> Unit,
+) {
+    if (state.recentFilters.isEmpty()) return
+    FilterPanel(title = stringResource(LocR.string.filters_recent)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+            verticalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
+        ) {
+            state.recentFilters.forEach { recent ->
+                PhotidyChip(
+                    label = recentLabel(recent, state.albums),
+                    selected = recent == state.filter,
+                    onClick = { onRecentSelected(recent) },
+                )
+            }
+        }
+    }
+}
+
+/** Short, localised summary so a saved filter is recognisable at a glance. */
+@Composable
+private fun recentLabel(filter: PhotoFilter, albums: List<Album>): String {
+    val parts = mutableListOf<String>()
+    filter.albumId?.let { albumId ->
+        parts += albums.firstOrNull { it.id == albumId }?.title
+            ?: stringResource(AlbumNames.nameRes(albumId))
+    }
+    if (filter.smart != SmartFilter.NONE) {
+        parts += stringResource(smartLabelRes(filter.smart))
+    }
+    filter.aiTag?.let { parts += stringResource(aiTagLabelRes(it)) }
+    when (filter.media) {
+        MediaFilter.PHOTOS -> parts += stringResource(LocR.string.filters_media_photos)
+        MediaFilter.VIDEOS -> parts += stringResource(LocR.string.filters_media_videos)
+        MediaFilter.ALL -> Unit
+    }
+    if (filter.dateRange != DateRangeFilter.ALL_TIME) {
+        parts += stringResource(dateRangeLabelRes(filter.dateRange))
+    }
+    if (filter.unorganizedOnly) {
+        parts += stringResource(LocR.string.filters_status_unreviewed)
+    }
+    return if (parts.isEmpty()) {
+        stringResource(LocR.string.filters_recent_all)
+    } else {
+        parts.take(2).joinToString(" · ")
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
 private fun AlbumSection(
     state: FiltersUiState,
     onAlbumSelected: (String?) -> Unit,
@@ -252,17 +309,8 @@ private fun SmartSection(
             verticalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
         ) {
             SmartFilter.entries.forEach { smart ->
-                val label = when (smart) {
-                    SmartFilter.NONE -> stringResource(LocR.string.filters_smart_none)
-                    SmartFilter.SCREENSHOTS -> stringResource(LocR.string.filters_smart_screenshots)
-                    SmartFilter.POSSIBLE_DUPLICATES ->
-                        stringResource(LocR.string.filters_smart_duplicates)
-                    SmartFilter.BURST_SHOTS -> stringResource(LocR.string.filters_smart_burst)
-                    SmartFilter.LONG_VIDEOS -> stringResource(LocR.string.filters_smart_long_videos)
-                    SmartFilter.LARGE_FILES -> stringResource(LocR.string.filters_smart_large_files)
-                }
                 PhotidyChip(
-                    label = label,
+                    label = stringResource(smartLabelRes(smart)),
                     selected = filter.smart == smart,
                     onClick = { onSmartSelected(smart) },
                     enabled = albumSelected,
@@ -345,6 +393,22 @@ private fun AiHint(res: Int) {
     )
 }
 
+private fun smartLabelRes(smart: SmartFilter): Int = when (smart) {
+    SmartFilter.NONE -> LocR.string.filters_smart_none
+    SmartFilter.SCREENSHOTS -> LocR.string.filters_smart_screenshots
+    SmartFilter.POSSIBLE_DUPLICATES -> LocR.string.filters_smart_duplicates
+    SmartFilter.BURST_SHOTS -> LocR.string.filters_smart_burst
+    SmartFilter.LONG_VIDEOS -> LocR.string.filters_smart_long_videos
+    SmartFilter.LARGE_FILES -> LocR.string.filters_smart_large_files
+}
+
+private fun dateRangeLabelRes(range: DateRangeFilter): Int = when (range) {
+    DateRangeFilter.ALL_TIME -> LocR.string.filters_date_all
+    DateRangeFilter.LAST_30_DAYS -> LocR.string.filters_date_30
+    DateRangeFilter.LAST_90_DAYS -> LocR.string.filters_date_90
+    DateRangeFilter.THIS_YEAR -> LocR.string.filters_date_year
+}
+
 private fun aiTagLabelRes(tag: AiTag): Int = when (tag) {
     AiTag.FOOD -> LocR.string.filters_ai_food
     AiTag.PET -> LocR.string.filters_ai_pet
@@ -383,14 +447,8 @@ private fun TimeSection(
             verticalArrangement = Arrangement.spacedBy(PhotidySpacing.sm),
         ) {
             DateRangeFilter.entries.forEach { range ->
-                val label = when (range) {
-                    DateRangeFilter.ALL_TIME -> stringResource(LocR.string.filters_date_all)
-                    DateRangeFilter.LAST_30_DAYS -> stringResource(LocR.string.filters_date_30)
-                    DateRangeFilter.LAST_90_DAYS -> stringResource(LocR.string.filters_date_90)
-                    DateRangeFilter.THIS_YEAR -> stringResource(LocR.string.filters_date_year)
-                }
                 PhotidyChip(
-                    label = label,
+                    label = stringResource(dateRangeLabelRes(range)),
                     selected = filter.dateRange == range,
                     onClick = { onDateRangeSelected(range) },
                 )
@@ -479,6 +537,7 @@ private fun FiltersScreenPreview() {
             onSmartSelected = {},
             onAiSelected = {},
             onUnorganizedOnlyChanged = {},
+            onRecentSelected = {},
         )
     }
 }

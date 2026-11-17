@@ -27,7 +27,14 @@ enum class AnimationStyle {
 enum class AppLanguage {
     SYSTEM,
     CHINESE,
+    CHINESE_TRADITIONAL,
     ENGLISH,
+    GERMAN,
+    JAPANESE,
+    KOREAN,
+    SPANISH,
+    FRENCH,
+    ITALIAN,
 }
 
 /** Where the photo list comes from. Device access is permission-gated by the host app. */
@@ -53,4 +60,6 @@ data class AppSettings(
     val libraryChoiceMade: Boolean = false,
     /** Opt-in on-device model for coarse photo labels; the model is downloaded once. */
     val aiRecognitionEnabled: Boolean = false,
+    /** Last filters used to start a session, newest first. */
+    val recentFilters: List<PhotoFilter> = emptyList(),
 )

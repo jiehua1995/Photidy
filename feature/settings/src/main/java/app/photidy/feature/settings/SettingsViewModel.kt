@@ -3,6 +3,7 @@ package app.photidy.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.photidy.core.data.AiModelState
+import app.photidy.core.data.AiScanProgress
 import app.photidy.core.data.LibraryState
 import app.photidy.core.data.PhotidyGraph
 import app.photidy.core.localization.LocaleController
@@ -34,6 +35,8 @@ class SettingsViewModel : ViewModel() {
     val library: StateFlow<LibraryState> = photoRepository.libraryState
 
     val aiModel: StateFlow<AiModelState> = PhotidyGraph.aiModelManager.state
+
+    val aiProgress: StateFlow<AiScanProgress> = PhotidyGraph.aiAnalysis.progress
 
     /** Turning the feature on fetches the small model once; turning it off stops a download. */
     fun setAiRecognition(enabled: Boolean) {

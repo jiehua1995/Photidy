@@ -8,7 +8,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -18,18 +28,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.photidy.core.data.PhotidyGraph
+import app.photidy.core.designsystem.components.PhotidyBottomBar
 import app.photidy.core.designsystem.components.PhotidyScreen
+import app.photidy.core.designsystem.components.PhotidyTabItem
+import app.photidy.core.designsystem.theme.PhotidySpacing
 import app.photidy.core.designsystem.theme.PhotidyTheme
 import app.photidy.core.localization.LocaleController
+import app.photidy.core.localization.R as LocR
 import app.photidy.core.model.AppSettings
 import app.photidy.core.model.ThemeMode
 import app.photidy.feature.duplicates.DuplicatesRoute
@@ -128,27 +144,63 @@ private fun PhotidyNavHost() {
     val duration = PhotidyTheme.motion.durationMedium
     val enter = fadeIn(animationSpec = tween(if (animationsEnabled) duration else 0))
     val exit = fadeOut(animationSpec = tween(if (animationsEnabled) duration / 2 else 0))
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.HOME,
-        enterTransition = { enter },
-        exitTransition = { exit },
-        popEnterTransition = { enter },
-        popExitTransition = { exit },
-    ) {
-        composable(Routes.HOME) {
-            HomeRoute(
-                onStartOrganizer = { navController.navigate(Routes.FILTERS) },
-                onContinueOrganizer = { navController.navigate(Routes.ORGANIZER) },
-                onOpenReview = { navController.navigate(Routes.REVIEW) },
-                onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
-                onOpenTimeline = { navController.navigate(Routes.TIMELINE) },
-                onOpenSearch = { navController.navigate(Routes.SEARCH) },
-                onOpenInsights = { navController.navigate(Routes.INSIGHTS) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
-            )
-        }
+    val tabs = listOf(
+        PhotidyTabItem(Routes.HOME, stringResource(LocR.string.tab_tidy), Icons.Filled.Home),
+        PhotidyTabItem(Routes.TIMELINE, stringResource(LocR.string.tab_photos), Icons.Filled.DateRange),
+        PhotidyTabItem(Routes.SEARCH, stringResource(LocR.string.tab_search), Icons.Filled.Search),
+        PhotidyTabItem(Routes.FAVORITES, stringResource(LocR.string.tab_favorites), Icons.Filled.Favorite),
+        PhotidyTabItem(
+            Routes.INSIGHTS,
+            stringResource(LocR.string.tab_insights),
+            Icons.AutoMirrored.Filled.List,
+        ),
+    )
+
+    Scaffold(
+        containerColor = PhotidyTheme.colors.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            if (tabs.any { it.route == currentRoute }) {
+                PhotidyBottomBar(
+                    items = tabs,
+                    currentRoute = currentRoute,
+                    onSelect = { route -> navController.navigateTab(route) },
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(
+                            start = PhotidySpacing.lg,
+                            end = PhotidySpacing.lg,
+                            top = PhotidySpacing.xs,
+                            bottom = PhotidySpacing.sm,
+                        ),
+                )
+            }
+        },
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Routes.HOME,
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = { enter },
+            exitTransition = { exit },
+            popEnterTransition = { enter },
+            popExitTransition = { exit },
+        ) {
+            composable(Routes.HOME) {
+                HomeRoute(
+                    onStartOrganizer = { navController.navigate(Routes.FILTERS) },
+                    onContinueOrganizer = { navController.navigate(Routes.ORGANIZER) },
+                    onOpenReview = { navController.navigate(Routes.REVIEW) },
+                    onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
+                    onOpenTimeline = { navController.navigate(Routes.TIMELINE) },
+                    onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                    onOpenInsights = { navController.navigate(Routes.INSIGHTS) },
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                )
+            }
 
         composable(Routes.FILTERS) {
             FiltersRoute(
@@ -182,7 +234,7 @@ private fun PhotidyNavHost() {
 
         composable(Routes.FAVORITES) {
             FavoritesRoute(
-                onBack = { navController.popBackStack() },
+                onBack = null,
                 onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
                 onSessionStarted = {
                     navController.navigate(Routes.ORGANIZER) {
@@ -194,7 +246,7 @@ private fun PhotidyNavHost() {
 
         composable(Routes.TIMELINE) {
             TimelineRoute(
-                onBack = { navController.popBackStack() },
+                onBack = null,
                 onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
             )
         }
@@ -205,14 +257,14 @@ private fun PhotidyNavHost() {
 
         composable(Routes.SEARCH) {
             SearchRoute(
-                onBack = { navController.popBackStack() },
+                onBack = null,
                 onOpenPhoto = { photoId -> navController.navigate(Routes.photoDetail(photoId)) },
             )
         }
 
         composable(Routes.INSIGHTS) {
             InsightsRoute(
-                onBack = { navController.popBackStack() },
+                onBack = null,
                 onOpenDuplicates = { navController.navigate(Routes.DUPLICATES) },
             )
         }
@@ -232,6 +284,16 @@ private fun PhotidyNavHost() {
         ) {
             PhotoDetailRoute(onBack = { navController.popBackStack() })
         }
+        }
+    }
+}
+
+/** Switches tabs without stacking them; each tab keeps its own scroll position. */
+private fun androidx.navigation.NavHostController.navigateTab(route: String) {
+    navigate(route) {
+        popUpTo(Routes.HOME) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
     }
 }
 

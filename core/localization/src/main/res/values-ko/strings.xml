@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Brand -->
+    <string name="app_name">Photidy</string>
+    <string name="brand_name">Photidy</string>
+    <string name="app_tagline">사진 정리를 위한, 한결 조용한 방법.</string>
+
+    <!-- Common -->
+    <string name="common_back">뒤로</string>
+    <string name="common_close">닫기</string>
+    <string name="common_cancel">취소</string>
+    <string name="common_done">완료</string>
+    <string name="common_remove">빼기</string>
+    <string name="common_clear">비우기</string>
+    <string name="common_reset">초기화</string>
+    <string name="common_all">전체</string>
+    <string name="common_none">없음</string>
+    <string name="common_undo">실행 취소</string>
+    <string name="common_settings">설정</string>
+    <string name="common_photos">사진</string>
+    <string name="common_selected">%1$d장 선택됨</string>
+    <string name="common_coming_soon">곧 제공됩니다</string>
+    <string name="common_demo">데모 보관함</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_tidy">정리</string>
+    <string name="tab_photos">사진</string>
+    <string name="tab_search">검색</string>
+    <string name="tab_favorites">즐겨찾기</string>
+    <string name="tab_insights">돌아보기</string>
+
+    <!-- Home -->
+    <string name="home_greeting_morning">좋은 아침입니다.</string>
+    <string name="home_greeting_afternoon">좋은 오후입니다.</string>
+    <string name="home_greeting_evening">좋은 저녁입니다.</string>
+    <string name="home_intro">사진을 정리하는 조용한 시간.</string>
+    <string name="home_continue_title">정리 이어 하기</string>
+    <string name="home_start_title">새로 정리 시작하기</string>
+    <string name="home_start_subtitle">차분하게 집중할 수 있는 작은 묶음을 골라 보세요.</string>
+    <string name="home_review_title">삭제 목록</string>
+    <string name="home_review_subtitle_empty">아직 표시된 사진이 없습니다</string>
+    <string name="home_favorites_title">즐겨찾기</string>
+    <string name="home_timeline_title">타임라인</string>
+    <string name="home_insights_title">돌아보기</string>
+    <string name="home_insights_subtitle">%1$d / %2$d 정리됨</string>
+    <string name="home_library_label">내 보관함</string>
+    <string name="home_library_source_demo">데모 사진</string>
+    <string name="home_library_source_device">이 기기</string>
+    <string name="home_library_prompt_title">내 사진 사용하기</string>
+    <string name="home_library_prompt_body">Photidy는 이 휴대폰에 있는 사진을 정리할 수 있습니다. 모든 데이터는 기기에 그대로 남습니다.</string>
+    <string name="home_library_prompt_action">접근 허용</string>
+    <string name="home_library_prompt_keep_demo">데모 사진 계속 사용하기</string>
+    <string name="home_library_prompt_denied">접근이 허용되지 않았습니다. 다시 시도하시거나 데모 사진을 계속 사용해 주세요.</string>
+    <string name="home_stat_photos">사진</string>
+    <string name="home_stat_organized">정리됨</string>
+    <string name="home_stat_favorites">즐겨찾기</string>
+    <string name="home_primary_cta">시작하기</string>
+    <string name="home_secondary_cta">계속하기</string>
+    <string name="home_session_complete_title">지난 정리를 마쳤습니다</string>
+    <string name="home_session_complete_subtitle">언제든지 새로운 정리를 시작할 수 있습니다.</string>
+
+    <!-- Organizer -->
+    <string name="organizer_title">정리 세션</string>
+    <string name="organizer_progress">%1$d / %2$d</string>
+    <string name="organizer_swipe_hint">사진을 스와이프하거나 아래 버튼을 사용해 주세요.</string>
+    <string name="organizer_action_delete">삭제 예정</string>
+    <string name="organizer_action_keep">남기기</string>
+    <string name="organizer_action_favorite">즐겨찾기</string>
+    <string name="organizer_action_album">앨범</string>
+    <string name="organizer_action_skip">건너뛰기</string>
+    <string name="organizer_action_none">동작 없음</string>
+    <string name="organizer_undo_done">마지막 동작을 되돌렸습니다.</string>
+    <string name="organizer_move_failed">이 사진을 이동하지 못했습니다.</string>
+    <string name="organizer_move_done">%1$s(으)로 이동했습니다.</string>
+    <string name="organizer_complete_title">정리를 마쳤습니다.</string>
+    <string name="organizer_complete_kept">%1$d장 남김</string>
+    <string name="organizer_complete_delete">%1$d장 삭제 예정</string>
+    <string name="organizer_complete_favorites">즐겨찾기 %1$d장</string>
+    <string name="organizer_complete_review">삭제 목록 열기</string>
+    <string name="organizer_complete_home">홈으로 돌아가기</string>
+    <string name="organizer_complete_undo">마지막 동작 되돌리기</string>
+    <string name="organizer_empty_title">아직 정리할 사진이 없습니다</string>
+    <string name="organizer_empty_message">먼저 정리하고 싶은 사진을 선택해 주세요.</string>
+    <string name="organizer_empty_action">사진 선택</string>
+    <string name="organizer_album_picker_title">앨범에 추가</string>
+    <string name="organizer_album_picker_subtitle">이 사진이 머물 곳을 골라 주세요.</string>
+    <string name="organizer_up_next">다음 사진</string>
+    <string name="organizer_session_stats">이번 세션</string>
+    <string name="organizer_session_acted">%1$d장 확인함</string>
+    <string name="organizer_session_remaining">%1$d장 남음</string>
+    <string name="organizer_card_detail">정보</string>
+    <string name="organizer_batch">묶음</string>
+    <string name="organizer_batch_done">완료</string>
+    <string name="organizer_batch_hint">사진을 눌러 선택해 주세요.</string>
+    <string name="organizer_batch_delete">%1$d장 삭제 예정</string>
+    <string name="organizer_batch_keep">%1$d장 남기기</string>
+    <string name="organizer_batch_empty">이 묶음에는 남은 사진이 없습니다</string>
+    <string name="organizer_batch_empty_message">묶음 모드를 나가면 한 장씩 계속할 수 있습니다.</string>
+
+    <!-- Gesture action descriptions -->
+    <string name="action_delete_desc">삭제 목록에 추가합니다</string>
+    <string name="action_keep_desc">남기고 정리됨으로 표시합니다</string>
+    <string name="action_favorite_desc">즐겨찾기하고 남깁니다</string>
+    <string name="action_album_desc">앨범에 추가합니다</string>
+    <string name="action_skip_desc">결정하지 않고 넘어갑니다</string>
+    <string name="action_none_desc">아무것도 하지 않습니다</string>
+
+    <!-- Gesture settings -->
+    <string name="settings_gestures_title">제스처</string>
+    <string name="settings_gestures_desc">스와이프마다 할 동작을 선택할 수 있습니다.</string>
+    <string name="settings_gestures_album_hint">앨범 동작은 실행할 때마다 앨범을 선택하도록 묻습니다.</string>
+    <string name="gesture_left">왼쪽으로 스와이프</string>
+    <string name="gesture_right">오른쪽으로 스와이프</string>
+    <string name="gesture_up">위로 스와이프</string>
+    <string name="gesture_down">아래로 스와이프</string>
+    <string name="settings_gestures_reset">기본값으로 복원</string>
+    <string name="settings_gesture_demo_title">제스처 테스트</string>
+    <string name="settings_gesture_demo_hint">이 카드를 스와이프해 동작을 느껴 보세요.</string>
+    <string name="settings_gesture_demo_result">실행할 동작: %1$s</string>
+    <string name="settings_gesture_demo_none">이 방향에는 지정된 동작이 없습니다.</string>
+
+    <!-- Filters -->
+    <string name="filters_title">사진 선택</string>
+    <string name="filters_album">앨범</string>
+    <string name="filters_album_all">모든 앨범</string>
+    <string name="filters_media">미디어 유형</string>
+    <string name="filters_media_all">사진 및 동영상</string>
+    <string name="filters_media_photos">사진</string>
+    <string name="filters_media_videos">동영상</string>
+    <string name="filters_date">기간</string>
+    <string name="filters_date_all">전체 기간</string>
+    <string name="filters_date_30">최근 30일</string>
+    <string name="filters_date_90">최근 90일</string>
+    <string name="filters_date_year">올해</string>
+    <string name="filters_sort">정렬</string>
+    <string name="filters_sort_newest">최신순</string>
+    <string name="filters_sort_oldest">오래된순</string>
+    <string name="filters_sort_largest">큰 파일순</string>
+    <string name="filters_sort_random">무작위</string>
+    <string name="filters_status">확인 상태</string>
+    <string name="filters_status_all">전체</string>
+    <string name="filters_status_unreviewed">아직 확인하지 않음</string>
+    <string name="filters_smart">스마트 추천</string>
+    <string name="filters_smart_none">끔</string>
+    <string name="filters_smart_screenshots">스크린샷</string>
+    <string name="filters_smart_duplicates">중복 가능성</string>
+    <string name="filters_smart_burst">연속 촬영</string>
+    <string name="filters_smart_long_videos">긴 동영상</string>
+    <string name="filters_smart_large_files">큰 파일</string>
+    <string name="filters_smart_hint">먼저 폴더를 선택해 주세요.</string>
+    <string name="filters_ai_title">AI 인식</string>
+    <string name="filters_ai_none">끔</string>
+    <string name="filters_ai_food">음식</string>
+    <string name="filters_ai_pet">반려동물</string>
+    <string name="filters_ai_document">문서</string>
+    <string name="filters_ai_nature">자연</string>
+    <string name="filters_ai_landmark">건축</string>
+    <string name="filters_ai_disabled_hint">설정에서 AI 인식을 켜면 사용할 수 있습니다.</string>
+    <string name="filters_ai_missing_hint">모델이 아직 다운로드되지 않았습니다. 설정에서 받아 주세요.</string>
+    <string name="filters_ai_failed_hint">모델 다운로드에 실패했습니다. 설정에서 다시 시도해 주세요.</string>
+    <string name="filters_ai_demo_hint">AI 인식은 이 기기의 사진만 분석합니다.</string>
+    <string name="filters_ai_hint">기기 안에서 백그라운드로 실행되며, 새 사진에는 자동으로 태그가 붙습니다.</string>
+    <string name="filters_ai_progress">%1$d / %2$d 인식 중</string>
+    <string name="filters_start_empty">조건에 맞는 사진이 없습니다</string>
+    <string name="filters_reset">필터 초기화</string>
+    <string name="filters_recent">최근 필터</string>
+    <string name="filters_recent_all">모든 사진</string>
+
+    <!-- Review -->
+    <string name="review_title">삭제 목록</string>
+    <string name="review_select">선택</string>
+    <string name="review_cancel_selection">취소</string>
+    <string name="review_select_all">전체 선택</string>
+    <string name="review_deselect_all">선택 해제</string>
+    <string name="review_remove_selected">%1$d장 빼기</string>
+    <string name="review_delete_selected">%1$d장 삭제</string>
+    <string name="review_clear_all">목록 비우기</string>
+    <string name="review_empty_title">삭제 예정인 사진이 없습니다</string>
+    <string name="review_empty_message">삭제 예정으로 표시한 사진이 여기에 모입니다. 파일은 삭제되지 않습니다.</string>
+    <string name="review_empty_action">정리 시작하기</string>
+    <string name="review_clear_title">삭제 목록을 비울까요?</string>
+    <string name="review_safety_note">Android가 확인을 요청하기 전까지는 아무것도 삭제되지 않습니다.</string>
+    <string name="review_delete_confirm_title">기기에서 삭제할까요?</string>
+    <string name="review_delete_confirm_message">이 기기에 저장된 사진만 삭제할 수 있습니다. Android가 확인을 요청하므로 그 화면에서 승인해 주세요. 삭제한 사진은 시스템 휴지통이 있으면 그곳으로 이동합니다.</string>
+    <string name="review_delete_action">삭제</string>
+    <string name="review_delete_unsupported">시스템 확인을 거치는 삭제는 Android 11 이상에서 지원됩니다.</string>
+    <string name="review_delete_failed">삭제된 사진이 없습니다.</string>
+    <string name="review_open_photo">사진 열기</string>
+    <string name="review_selected">%1$d장 선택됨</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">즐겨찾기</string>
+    <string name="favorites_empty_title">아직 즐겨찾기가 없습니다</string>
+    <string name="favorites_empty_message">정리할 때 하트를 누르면 좋아하는 사진이 이곳에 모입니다.</string>
+
+    <!-- Search -->
+    <string name="search_hint_title">보관함 검색</string>
+    <string name="search_hint_message">파일 이름, 앨범, 또는 2026-11 같은 날짜로 검색해 보세요.</string>
+    <string name="search_empty_title">일치하는 사진이 없습니다</string>
+    <string name="search_empty_message">더 짧은 단어나 다른 달로 검색해 보세요.</string>
+    <string name="search_placeholder">사진 검색</string>
+
+    <!-- Timeline -->
+    <string name="timeline_title">타임라인</string>
+    <string name="timeline_empty_title">타임라인이 아직 비어 있습니다</string>
+    <string name="timeline_empty_message">사진은 촬영한 달을 기준으로 묶여 여기에 표시됩니다.</string>
+    <string name="timeline_month_header">%2$d년 %1$s</string>
+    <string name="timeline_unknown_date">날짜 정보 없음</string>
+    <string name="timeline_subtitle">%1$s · %2$s</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_title">중복 사진</string>
+    <string name="duplicates_subtitle">%1$s · 약 %2$s 정리 가능</string>
+    <string name="duplicates_keep">남기기</string>
+    <string name="duplicates_flag">삭제 예정</string>
+    <string name="duplicates_apply">이 사진 남기기</string>
+    <string name="duplicates_skip">건너뛰기</string>
+    <string name="duplicates_restore">건너뛴 %1$d개 그룹 보기</string>
+    <string name="duplicates_empty_title">중복 사진을 찾지 못했습니다</string>
+    <string name="duplicates_empty_message">파일 크기와 해상도가 정확히 일치하는 사진을 비교합니다. 픽셀을 해석하지 않아 빠르게 끝납니다.</string>
+
+    <!-- Insights -->
+    <string name="insights_title">돌아보기</string>
+    <string name="insights_total">사진</string>
+    <string name="insights_organized">정리됨</string>
+    <string name="insights_delete">삭제 예정</string>
+    <string name="insights_favorites">즐겨찾기</string>
+    <string name="insights_completion">정리 현황</string>
+    <string name="insights_monthly">월별 사진</string>
+    <string name="insights_session">이번 세션</string>
+    <string name="insights_session_acted">%1$d / %2$d 확인함</string>
+    <string name="insights_session_delete">%1$d장 삭제 예정</string>
+    <string name="insights_session_favorites">즐겨찾기 %1$d장</string>
+    <string name="insights_no_session">정리를 시작하면 이곳에서 진행 상황을 볼 수 있습니다.</string>
+    <string name="insights_chart_empty">최근 12개월 동안 사진이 없습니다.</string>
+    <string name="insights_month_label">월</string>
+    <string name="insights_composition">보관함 구성</string>
+    <string name="insights_remaining">아직 확인하지 않음</string>
+    <string name="insights_monthly_peak">가장 많음: %1$s · %2$d장</string>
+    <string name="insights_storage">저장 공간</string>
+    <string name="insights_storage_albums">용량이 큰 앨범</string>
+    <string name="insights_storage_empty">아직 측정할 파일이 없습니다.</string>
+    <string name="insights_unknown_album">기타</string>
+    <string name="insights_reclaim_delete">삭제 예정</string>
+    <string name="insights_duplicates">중복 사진</string>
+    <string name="insights_duplicates_groups">%1$d개 그룹 · %2$s 정리 가능</string>
+    <string name="insights_duplicates_body">파일 크기와 해상도가 정확히 일치하는 사진을 비교합니다. 그룹마다 남길 한 장을 선택해 주세요.</string>
+    <string name="insights_duplicates_action">사진 비교하기</string>
+    <string name="insights_duplicates_empty">현재 중복 그룹이 없습니다.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">설정</string>
+    <string name="settings_appearance">화면</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_theme_system">시스템</string>
+    <string name="settings_theme_light">라이트</string>
+    <string name="settings_theme_dark">다크</string>
+    <string name="settings_style">시각 스타일</string>
+    <string name="settings_style_minimal">미니멀</string>
+    <string name="settings_style_glass">리퀴드 글래스</string>
+    <string name="settings_style_cloud">플루이드 클라우드</string>
+    <string name="settings_style_minimal_desc">차분한 단색 표면. 배터리에도 가볍습니다.</string>
+    <string name="settings_style_glass_desc">부드러운 반투명과 섬세한 가장자리.</string>
+    <string name="settings_style_cloud_desc">천천히 흐르는 빛이 조용히 살아 숨 쉽니다.</string>
+    <string name="settings_intensity">효과 강도</string>
+    <string name="settings_intensity_value">%1$d%%</string>
+    <string name="settings_animation">애니메이션 스타일</string>
+    <string name="settings_animation_gentle">부드럽게</string>
+    <string name="settings_animation_natural">자연스럽게</string>
+    <string name="settings_animation_lively">생동감 있게</string>
+    <string name="settings_animations">애니메이션</string>
+    <string name="settings_animations_desc">끄면 더 조용하고 정적인 경험이 됩니다.</string>
+    <string name="settings_haptics">햅틱</string>
+    <string name="settings_haptics_desc">동작이 완료될 때 부드럽게 진동합니다.</string>
+    <string name="settings_language">언어</string>
+    <string name="settings_language_system">시스템 설정 따르기</string>
+    <string name="settings_language_zh">简体中文</string>
+    <string name="settings_language_zh_tw">繁體中文</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_ja">日本語</string>
+    <string name="settings_language_ko">한국어</string>
+    <string name="settings_language_es">Español</string>
+    <string name="settings_language_fr">Français</string>
+    <string name="settings_language_it">Italiano</string>
+    <string name="settings_library">보관함</string>
+    <string name="settings_library_device">이 기기</string>
+    <string name="settings_library_demo">데모 보관함</string>
+    <string name="settings_library_demo_subtitle">Photidy를 체험할 수 있는 기본 예시 사진입니다.</string>
+    <string name="settings_library_no_access">사진 접근이 꺼져 있습니다</string>
+    <string name="settings_library_scanning">검사 중…</string>
+    <string name="settings_library_rescan">다시 검사</string>
+    <string name="settings_library_allow">접근 허용</string>
+    <string name="settings_ai">기기 내 AI</string>
+    <string name="settings_ai_toggle">AI 인식 사용</string>
+    <string name="settings_ai_toggle_desc">작은 모델을 한 번만 내려받고, 이후 분류는 전부 이 기기에서 실행됩니다. 사진은 절대 업로드되지 않습니다.</string>
+    <string name="settings_ai_off_note">선택 사항입니다. 꺼 두어도 다른 기능은 모두 작동합니다.</string>
+    <string name="settings_ai_missing">모델이 아직 다운로드되지 않았습니다.</string>
+    <string name="settings_ai_downloading">다운로드 중 %1$d%%</string>
+    <string name="settings_ai_ready">모델 준비 완료 · 모두 기기에서 실행</string>
+    <string name="settings_ai_scanning">%1$d / %2$d장 사진 인식 중</string>
+    <string name="settings_ai_failed">다운로드에 실패했습니다. 연결을 확인하고 다시 시도해 주세요.</string>
+    <string name="settings_ai_download">모델 다운로드</string>
+    <string name="settings_ai_retry">다시 시도</string>
+    <string name="settings_ai_delete">모델 삭제</string>
+    <string name="settings_about">정보</string>
+    <string name="settings_version">버전 %1$s</string>
+    <string name="settings_privacy_title">개인정보 보호</string>
+    <string name="settings_privacy_body">Photidy는 전적으로 기기에서 작동합니다. 계정도, 클라우드도, 추적도 없습니다. 사진은 접근을 허용한 뒤에만 읽으며, 사진을 삭제하거나 이동할 때는 항상 Android 자체 대화상자에서 확인을 요청합니다. 어떤 내용도 업로드되지 않으며, 선택형 AI 모델은 한 번만 내려받아 기기에서 실행됩니다.</string>
+    <string name="settings_developer_title">개발자</string>
+    <string name="settings_developer_body">한 명의 독립 개발자가 정성을 담아 만들었습니다.</string>
+    <string name="settings_support_title">개발자 응원하기</string>
+    <string name="settings_support_body">작은 후원이 Photidy를 무료하고 조용하게 지켜 줍니다.</string>
+    <string name="settings_support_button">커피 한 잔 사주기</string>
+    <string name="settings_support_coming_soon">곧 제공됩니다</string>
+
+    <!-- Photo detail -->
+    <string name="detail_title">사진</string>
+    <string name="detail_meta">정보</string>
+    <string name="detail_date">촬영일</string>
+    <string name="detail_resolution">해상도</string>
+    <string name="detail_size">크기</string>
+    <string name="detail_album">앨범</string>
+    <string name="detail_status">상태</string>
+    <string name="detail_duration">재생 시간</string>
+    <string name="detail_favorite_on">즐겨찾기</string>
+    <string name="detail_favorite_off">즐겨찾기 아님</string>
+    <string name="detail_status_unreviewed">확인하지 않음</string>
+    <string name="detail_status_kept">남긴 사진</string>
+    <string name="detail_status_delete">삭제 예정</string>
+    <string name="detail_action_favorite">즐겨찾기에 추가</string>
+    <string name="detail_action_unfavorite">즐겨찾기에서 제거</string>
+    <string name="detail_action_delete">삭제 예정으로 표시</string>
+    <string name="detail_action_keep">남긴 사진으로 표시</string>
+    <string name="detail_action_remove_delete">삭제 목록에서 빼기</string>
+    <string name="detail_safety_note">읽기 전용 미리보기입니다. 기기의 어떤 파일도 변경되지 않습니다.</string>
+    <string name="detail_not_found">사진을 찾을 수 없습니다.</string>
+    <string name="detail_open_preview">눌러서 크게 보기</string>
+    <string name="detail_zoom_hint">두 손가락으로 확대 · 두 번 눌러 더 크게</string>
+
+    <!-- Albums -->
+    <string name="album_camera">카메라</string>
+    <string name="album_travel">여행</string>
+    <string name="album_family">가족</string>
+    <string name="album_nature">자연</string>
+    <string name="album_city">도시</string>
+    <string name="album_food">음식</string>
+    <string name="album_pets">반려동물</string>
+    <string name="album_other">기타</string>
+
+    <!-- Plurals -->
+    <plurals name="photo_count">
+        <item quantity="one">사진 %1$d장</item>
+        <item quantity="other">사진 %1$d장</item>
+    </plurals>
+    <plurals name="photos_left">
+        <item quantity="one">사진 %1$d장 남음</item>
+        <item quantity="other">사진 %1$d장 남음</item>
+    </plurals>
+    <plurals name="photos_with_size">
+        <item quantity="one">사진 %1$d장 · %2$s</item>
+        <item quantity="other">사진 %1$d장 · %2$s</item>
+    </plurals>
+    <plurals name="start_with_photos">
+        <item quantity="one">사진 %1$d장으로 시작</item>
+        <item quantity="other">사진 %1$d장으로 시작</item>
+    </plurals>
+    <plurals name="review_summary_plural">
+        <item quantity="one">사진 %1$d장 · 약 %2$s</item>
+        <item quantity="other">사진 %1$d장 · 약 %2$s</item>
+    </plurals>
+    <plurals name="clear_delete_message">
+        <item quantity="one">사진 %1$d장이 이 목록에서 모두 빠집니다. 기기의 파일은 삭제되지 않습니다.</item>
+        <item quantity="other">사진 %1$d장이 이 목록에서 모두 빠집니다. 기기의 파일은 삭제되지 않습니다.</item>
+    </plurals>
+    <plurals name="reviewed_photos_message">
+        <item quantity="one">사진 %1$d장을 살펴보았습니다.</item>
+        <item quantity="other">사진 %1$d장을 살펴보았습니다.</item>
+    </plurals>
+    <plurals name="device_photos_found">
+        <item quantity="one">사진 %1$d장을 찾았습니다</item>
+        <item quantity="other">사진 %1$d장을 찾았습니다</item>
+    </plurals>
+    <plurals name="device_photos_found_limited">
+        <item quantity="one">사진 %1$d장 · 일부 접근만 허용</item>
+        <item quantity="other">사진 %1$d장 · 일부 접근만 허용</item>
+    </plurals>
+    <plurals name="review_delete_done">
+        <item quantity="one">사진 %1$d장을 삭제했습니다</item>
+        <item quantity="other">사진 %1$d장을 삭제했습니다</item>
+    </plurals>
+    <plurals name="review_trash_notice">
+        <item quantity="one">사진 %1$d장이 Android 휴지통에 있습니다 · 약 %2$d일 더 복원할 수 있습니다</item>
+        <item quantity="other">사진 %1$d장이 Android 휴지통에 있습니다 · 약 %2$d일 더 복원할 수 있습니다</item>
+    </plurals>
+    <plurals name="review_trash_notice_unknown">
+        <item quantity="one">사진 %1$d장이 Android 휴지통에 있으며 그곳에서 복원할 수 있습니다.</item>
+        <item quantity="other">사진 %1$d장이 Android 휴지통에 있으며 그곳에서 복원할 수 있습니다.</item>
+    </plurals>
+    <plurals name="timeline_months">
+        <item quantity="one">%1$d개월</item>
+        <item quantity="other">%1$d개월</item>
+    </plurals>
+    <plurals name="duplicate_groups">
+        <item quantity="one">%1$d개 그룹</item>
+        <item quantity="other">%1$d개 그룹</item>
+    </plurals>
+    <plurals name="duplicate_others">
+        <item quantity="one">나머지 사진 %1$d장이 삭제 예정으로 표시됩니다 · 약 %2$s</item>
+        <item quantity="other">나머지 사진 %1$d장이 삭제 예정으로 표시됩니다 · 약 %2$s</item>
+    </plurals>
+    <plurals name="duplicates_applied">
+        <item quantity="one">사진 %1$d장을 삭제 예정으로 표시했습니다</item>
+        <item quantity="other">사진 %1$d장을 삭제 예정으로 표시했습니다</item>
+    </plurals>
+    <plurals name="insights_videos">
+        <item quantity="one">동영상 %1$d개</item>
+        <item quantity="other">동영상 %1$d개</item>
+    </plurals>
+    <plurals name="insights_screenshots">
+        <item quantity="one">스크린샷 %1$d장</item>
+        <item quantity="other">스크린샷 %1$d장</item>
+    </plurals>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">뒤로 가기</string>
+    <string name="cd_settings">설정 열기</string>
+    <string name="cd_search">사진 검색</string>
+    <string name="cd_clear_search">검색어 지우기</string>
+    <string name="cd_change_scope">다른 폴더 선택</string>
+    <string name="cd_undo">마지막 동작 되돌리기</string>
+    <string name="cd_photo">사진</string>
+    <string name="cd_favorite">즐겨찾기</string>
+    <string name="cd_delete">삭제 예정으로 표시</string>
+    <string name="cd_keep">사진 남기기</string>
+    <string name="cd_album">앨범에 추가</string>
+    <string name="cd_skip">사진 건너뛰기</string>
+    <string name="cd_close">닫기</string>
+    <string name="cd_select">사진 선택</string>
+    <string name="cd_selected">선택됨</string>
+    <string name="cd_unselected">선택 안 됨</string>
+    <string name="cd_details">사진 정보 보기</string>
+    <string name="cd_start">정리 시작하기</string>
+    <string name="cd_gesture_demo">제스처 테스트 카드</string>
+
+    <!-- Errors -->
+    <string name="error_generic">문제가 발생했습니다.</string>
+
+</resources>

@@ -44,6 +44,43 @@ data class InsightsSummary(
         get() = if (totalPhotos == 0) 0f else organizedCount.toFloat() / totalPhotos
 }
 
+/**
+ * Cheap counters for the home screen. Kept separate from [InsightsSummary] so the home tab
+ * never pays for album ranking or duplicate grouping on every review decision.
+ */
+data class LibraryStats(
+    val total: Int = 0,
+    val organized: Int = 0,
+    val favorites: Int = 0,
+    val deleteCount: Int = 0,
+    val deleteBytes: Long = 0L,
+)
+
+object LibraryStatsCalculator {
+
+    fun calculate(photos: List<PhotoWithState>): LibraryStats {
+        var organized = 0
+        var favorites = 0
+        var deleteCount = 0
+        var deleteBytes = 0L
+        photos.forEach { item ->
+            if (item.state.isReviewed) organized++
+            if (item.state.favorite) favorites++
+            if (item.state.decision == PhotoDecision.DELETE_CANDIDATE) {
+                deleteCount++
+                deleteBytes += item.photo.sizeBytes
+            }
+        }
+        return LibraryStats(
+            total = photos.size,
+            organized = organized,
+            favorites = favorites,
+            deleteCount = deleteCount,
+            deleteBytes = deleteBytes,
+        )
+    }
+}
+
 object InsightsCalculator {
 
     fun calculate(

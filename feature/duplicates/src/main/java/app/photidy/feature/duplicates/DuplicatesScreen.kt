@@ -70,6 +70,7 @@ fun DuplicatesRoute(
         onChooseKeeper = viewModel::chooseKeeper,
         onSkip = viewModel::skip,
         onApply = viewModel::applyGroup,
+        onUndo = viewModel::undoLast,
         onRestoreSkipped = viewModel::restoreSkipped,
         modifier = modifier,
     )
@@ -82,6 +83,7 @@ fun DuplicatesScreen(
     onChooseKeeper: (String, String) -> Unit,
     onSkip: (String) -> Unit,
     onApply: (String) -> Unit,
+    onUndo: () -> Unit,
     onRestoreSkipped: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -120,6 +122,13 @@ fun DuplicatesScreen(
                 },
             )
 
+            state.lastApplied?.let { applied ->
+                UndoStrip(
+                    count = applied.flaggedIds.size,
+                    onUndo = onUndo,
+                )
+            }
+
             if (state.isLoading) {
                 Spacer(Modifier.weight(1f))
             } else if (state.groups.isEmpty()) {
@@ -157,6 +166,40 @@ fun DuplicatesScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun UndoStrip(
+    count: Int,
+    onUndo: () -> Unit,
+) {
+    PhotidySurface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = PhotidySpacing.lg, vertical = PhotidySpacing.xs),
+        contentPadding = PaddingValues(horizontal = PhotidySpacing.lg, vertical = 2.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = pluralStringResource(
+                    LocR.plurals.duplicates_applied,
+                    count,
+                    count,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = Theme.colors.textSecondary,
+                modifier = Modifier.weight(1f),
+            )
+            PhotidyTextButton(
+                text = stringResource(LocR.string.common_undo),
+                onClick = onUndo,
+                tint = Theme.colors.accent,
+            )
         }
     }
 }
@@ -237,6 +280,7 @@ private fun DuplicateTile(
         PhotoImage(
             photo = photo,
             modifier = Modifier.fillMaxSize(),
+            thumbnail = true,
         )
         // Dim the photos that would be flagged, so the keeper stands out at a glance.
         if (!isKeeper) {
@@ -309,6 +353,7 @@ private fun DuplicatesScreenPreview() {
             onChooseKeeper = { _, _ -> },
             onSkip = {},
             onApply = {},
+            onUndo = {},
             onRestoreSkipped = {},
         )
     }

@@ -21,6 +21,8 @@ fun PhotoImage(
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Crop,
     alignment: Alignment = Alignment.Center,
+    /** Grids pass true so Coil decodes a small bitmap instead of a full-resolution photo. */
+    thumbnail: Boolean = false,
 ) {
     val uri = photo.contentUri
     if (uri.isNullOrBlank()) {
@@ -36,6 +38,9 @@ fun PhotoImage(
     AsyncImage(
         model = ImageRequest.Builder(context)
             .data(Uri.parse(uri))
+            .apply {
+                if (thumbnail) size(THUMBNAIL_PX, THUMBNAIL_PX)
+            }
             .crossfade(true)
             .build(),
         contentDescription = contentDescription,
@@ -44,3 +49,6 @@ fun PhotoImage(
         alignment = alignment,
     )
 }
+
+/** Roughly 3x a 148dp grid tile, which stays sharp without holding full-size bitmaps. */
+private const val THUMBNAIL_PX = 448

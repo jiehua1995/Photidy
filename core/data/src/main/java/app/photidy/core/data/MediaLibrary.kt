@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import app.photidy.core.model.Album
 import app.photidy.core.model.PhotoItem
@@ -33,6 +34,12 @@ data class DeviceLibrary(
     val albums: List<Album> = emptyList(),
 )
 
+/** Deleted media still sitting in Android's trash, with the soonest removal time. */
+data class TrashSummary(
+    val count: Int = 0,
+    val earliestExpiryMillis: Long = 0L,
+)
+
 const val DEMO_ALBUM_UNKNOWN = "bucket:unknown"
 
 /** Queries the device photo library read-only through MediaStore. */
@@ -59,6 +66,39 @@ class MediaLibrary(private val context: Context) {
             }
         }
         buildDeviceLibrary(rows, limit)
+    }
+
+    /**
+     * Counts media in Android's own trash and returns the soonest expiry. Only available on
+     * Android 11+, where system-confirmed deletion started moving files to the trash.
+     */
+    suspend fun trashedSummary(): TrashSummary = withContext(Dispatchers.IO) {
+        if (!hasAccess() || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return@withContext TrashSummary()
+        }
+        runCatching {
+            val collection = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
+            val projection = arrayOf(MediaStore.MediaColumns.DATE_EXPIRES)
+            val selection = "${MediaStore.MediaColumns.IS_TRASHED} = 1"
+            context.contentResolver.query(collection, projection, selection, null, null)
+                ?.use { cursor ->
+                    val expiresColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DATE_EXPIRES)
+                    var count = 0
+                    var soonest = Long.MAX_VALUE
+                    while (cursor.moveToNext()) {
+                        count++
+                        if (expiresColumn >= 0 && !cursor.isNull(expiresColumn)) {
+                            // MediaStore reports this column in seconds.
+                            val expires = cursor.getLong(expiresColumn) * 1_000L
+                            if (expires in 1 until soonest) soonest = expires
+                        }
+                    }
+                    TrashSummary(
+                        count = count,
+                        earliestExpiryMillis = if (soonest == Long.MAX_VALUE) 0L else soonest,
+                    )
+                } ?: TrashSummary()
+        }.getOrElse { TrashSummary() }
     }
 
     private fun queryRows(limit: Int, onRow: (DeviceMediaRow) -> Unit) {

@@ -87,4 +87,4 @@
 - 新增架构决策更新 `ARCHITECTURE.md`
 - 新增视觉令牌 / 组件更新 `DESIGN_SYSTEM.md`
 - 每个版本更新 `ROADMAP.md` 与 `CHANGELOG.md`
-- README 保持环境要求、构建命令与已知限制最新
+- README 面向使用者（功能、下载、隐私），构建命令与已知限制维护在 `docs/DEVELOPMENT.md`

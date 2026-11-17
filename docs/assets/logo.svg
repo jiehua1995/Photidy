@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Photidy">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#87AE96"/>
+      <stop offset="1" stop-color="#4F7261"/>
+    </linearGradient>
+    <linearGradient id="photo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAF8F2"/>
+      <stop offset="1" stop-color="#E7E0D1"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
+  <rect x="8" y="8" width="112" height="112" rx="24" fill="none" stroke="#FFFFFF" stroke-opacity="0.16"/>
+  <g transform="translate(64 70)">
+    <rect x="-36" y="-30" width="52" height="60" rx="9" fill="#FFFFFF" opacity="0.22" transform="rotate(-11)"/>
+    <rect x="-16" y="-34" width="52" height="60" rx="9" fill="#FFFFFF" opacity="0.42" transform="rotate(5)"/>
+    <rect x="-26" y="-26" width="52" height="60" rx="9" fill="url(#photo)"/>
+    <circle cx="-8" cy="-9" r="7" fill="#87AE96"/>
+    <path d="M-26 20 L-8 3 L4 12 L14 4 L26 20 Z" fill="#5F8873"/>
+  </g>
+</svg>

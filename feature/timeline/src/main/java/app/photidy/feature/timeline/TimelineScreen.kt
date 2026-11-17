@@ -61,7 +61,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TimelineRoute(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -79,7 +79,7 @@ fun TimelineRoute(
 @Composable
 fun TimelineScreen(
     state: TimelineUiState,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -250,6 +250,7 @@ private fun TimelineTile(
         PhotoImage(
             photo = photo,
             modifier = Modifier.fillMaxSize(),
+            thumbnail = true,
         )
         val duration = photo.durationSeconds
         if (photo.isVideo && duration != null) {

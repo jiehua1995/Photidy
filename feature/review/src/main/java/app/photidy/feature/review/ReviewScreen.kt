@@ -73,6 +73,7 @@ import app.photidy.core.designsystem.theme.rememberPhotidyWidthClass
 import app.photidy.core.localization.PhotidyFormatters
 import app.photidy.core.localization.R as LocR
 import app.photidy.core.model.PhotoWithState
+import app.photidy.core.model.TrashWindow
 import java.util.Locale
 
 @Composable
@@ -179,6 +180,21 @@ fun ReviewScreen(
                         }
                     },
                 )
+
+                if (state.trashCount > 0) {
+                    TrashNotice(
+                        count = state.trashCount,
+                        daysLeft = TrashWindow.daysLeft(
+                            expiresAtMillis = state.trashExpiryMillis,
+                            now = System.currentTimeMillis(),
+                        ),
+                        modifier = Modifier.padding(
+                            start = if (expanded) PhotidySpacing.xxl else PhotidySpacing.lg,
+                            end = if (expanded) PhotidySpacing.xxl else PhotidySpacing.lg,
+                            top = PhotidySpacing.xs,
+                        ),
+                    )
+                }
 
                 if (state.items.isEmpty()) {
                     Box(
@@ -361,6 +377,37 @@ fun ReviewScreen(
     }
 }
 
+@Composable
+private fun TrashNotice(
+    count: Int,
+    daysLeft: Int,
+    modifier: Modifier = Modifier,
+) {
+    PhotidySurface(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(PhotidySpacing.md),
+    ) {
+        Text(
+            text = if (daysLeft > 0) {
+                pluralStringResource(
+                    LocR.plurals.review_trash_notice,
+                    count,
+                    count,
+                    daysLeft,
+                )
+            } else {
+                pluralStringResource(
+                    LocR.plurals.review_trash_notice_unknown,
+                    count,
+                    count,
+                )
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = Theme.colors.textSecondary,
+        )
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReviewTile(
@@ -395,6 +442,7 @@ private fun ReviewTile(
         PhotoImage(
             photo = item.photo,
             modifier = Modifier.fillMaxSize(),
+            thumbnail = true,
         )
 
         Box(

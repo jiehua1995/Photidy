@@ -14,7 +14,14 @@ object LocaleController {
         val locales = when (language) {
             AppLanguage.SYSTEM -> LocaleListCompat.getEmptyLocaleList()
             AppLanguage.CHINESE -> LocaleListCompat.forLanguageTags("zh-CN")
+            AppLanguage.CHINESE_TRADITIONAL -> LocaleListCompat.forLanguageTags("zh-TW")
             AppLanguage.ENGLISH -> LocaleListCompat.forLanguageTags("en")
+            AppLanguage.GERMAN -> LocaleListCompat.forLanguageTags("de")
+            AppLanguage.JAPANESE -> LocaleListCompat.forLanguageTags("ja")
+            AppLanguage.KOREAN -> LocaleListCompat.forLanguageTags("ko")
+            AppLanguage.SPANISH -> LocaleListCompat.forLanguageTags("es")
+            AppLanguage.FRENCH -> LocaleListCompat.forLanguageTags("fr")
+            AppLanguage.ITALIAN -> LocaleListCompat.forLanguageTags("it")
         }
         if (AppCompatDelegate.getApplicationLocales() != locales) {
             AppCompatDelegate.setApplicationLocales(locales)

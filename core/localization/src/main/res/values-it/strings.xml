@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Brand -->
+    <string name="app_name">Photidy</string>
+    <string name="brand_name">Photidy</string>
+    <string name="app_tagline">Un modo più tranquillo di organizzare le tue foto.</string>
+
+    <!-- Common -->
+    <string name="common_back">Indietro</string>
+    <string name="common_close">Chiudi</string>
+    <string name="common_cancel">Annulla</string>
+    <string name="common_done">Fatto</string>
+    <string name="common_remove">Rimuovi</string>
+    <string name="common_clear">Cancella</string>
+    <string name="common_reset">Reimposta</string>
+    <string name="common_all">Tutto</string>
+    <string name="common_none">Nessuno</string>
+    <string name="common_undo">Annulla</string>
+    <string name="common_settings">Impostazioni</string>
+    <string name="common_photos">foto</string>
+    <string name="common_selected">%1$d selezionate</string>
+    <string name="common_coming_soon">In arrivo</string>
+    <string name="common_demo">Libreria demo</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_tidy">Riordina</string>
+    <string name="tab_photos">Foto</string>
+    <string name="tab_search">Cerca</string>
+    <string name="tab_favorites">Preferiti</string>
+    <string name="tab_insights">Ricordi</string>
+
+    <!-- Home -->
+    <string name="home_greeting_morning">Buongiorno.</string>
+    <string name="home_greeting_afternoon">Buon pomeriggio.</string>
+    <string name="home_greeting_evening">Buonasera.</string>
+    <string name="home_intro">Un momento tranquillo per riordinare le tue foto.</string>
+    <string name="home_continue_title">Continua a riordinare</string>
+    <string name="home_start_title">Inizia un nuovo riordino</string>
+    <string name="home_start_subtitle">Scegli un gruppo tranquillo e mirato.</string>
+    <string name="home_review_title">Lista di eliminazione</string>
+    <string name="home_review_subtitle_empty">Non hai ancora contrassegnato nulla</string>
+    <string name="home_favorites_title">Preferiti</string>
+    <string name="home_timeline_title">Cronologia</string>
+    <string name="home_insights_title">Ricordi</string>
+    <string name="home_insights_subtitle">%1$d di %2$d organizzate</string>
+    <string name="home_library_label">La tua libreria</string>
+    <string name="home_library_source_demo">Foto demo</string>
+    <string name="home_library_source_device">Su questo dispositivo</string>
+    <string name="home_library_prompt_title">Usa le tue foto</string>
+    <string name="home_library_prompt_body">Photidy può riordinare le foto già presenti su questo telefono. Tutto resta sul tuo dispositivo.</string>
+    <string name="home_library_prompt_action">Consenti accesso</string>
+    <string name="home_library_prompt_keep_demo">Mantieni le foto demo</string>
+    <string name="home_library_prompt_denied">L\'accesso non è stato concesso. Riprova o continua con le foto demo.</string>
+    <string name="home_stat_photos">Foto</string>
+    <string name="home_stat_organized">Organizzate</string>
+    <string name="home_stat_favorites">Preferiti</string>
+    <string name="home_primary_cta">Inizia</string>
+    <string name="home_secondary_cta">Continua</string>
+    <string name="home_session_complete_title">Hai completato il tuo ultimo riordino</string>
+    <string name="home_session_complete_subtitle">Inizia una nuova sessione quando vuoi.</string>
+
+    <!-- Organizer -->
+    <string name="organizer_title">Sessione di riordino</string>
+    <string name="organizer_progress">%1$d / %2$d</string>
+    <string name="organizer_swipe_hint">Scorri la foto o usa i pulsanti qui sotto.</string>
+    <string name="organizer_action_delete">Da eliminare</string>
+    <string name="organizer_action_keep">Mantieni</string>
+    <string name="organizer_action_favorite">Preferito</string>
+    <string name="organizer_action_album">Album</string>
+    <string name="organizer_action_skip">Salta</string>
+    <string name="organizer_action_none">Nessuna azione</string>
+    <string name="organizer_undo_done">Ultima azione annullata.</string>
+    <string name="organizer_move_failed">Impossibile spostare questa foto.</string>
+    <string name="organizer_move_done">Spostata in %1$s.</string>
+    <string name="organizer_complete_title">Tutto in ordine.</string>
+    <string name="organizer_complete_kept">%1$d mantenute</string>
+    <string name="organizer_complete_delete">%1$d contrassegnate per l\'eliminazione</string>
+    <string name="organizer_complete_favorites">%1$d preferite</string>
+    <string name="organizer_complete_review">Apri la lista di eliminazione</string>
+    <string name="organizer_complete_home">Torna alla home</string>
+    <string name="organizer_complete_undo">Annulla l\'ultima azione</string>
+    <string name="organizer_empty_title">Non c\'è ancora nulla da riordinare</string>
+    <string name="organizer_empty_message">Scegli quali foto vuoi esaminare per prime.</string>
+    <string name="organizer_empty_action">Scegli le foto</string>
+    <string name="organizer_album_picker_title">Aggiungi a un album</string>
+    <string name="organizer_album_picker_subtitle">Scegli dove mettere questa foto.</string>
+    <string name="organizer_up_next">Prossima</string>
+    <string name="organizer_session_stats">Questa sessione</string>
+    <string name="organizer_session_acted">%1$d esaminate</string>
+    <string name="organizer_session_remaining">%1$d rimaste</string>
+    <string name="organizer_card_detail">Dettagli</string>
+    <string name="organizer_batch">Gruppo</string>
+    <string name="organizer_batch_done">Fatto</string>
+    <string name="organizer_batch_hint">Tocca le foto per selezionarle.</string>
+    <string name="organizer_batch_delete">Da eliminare %1$d</string>
+    <string name="organizer_batch_keep">Mantieni %1$d</string>
+    <string name="organizer_batch_empty">Non è rimasto nulla in questo gruppo</string>
+    <string name="organizer_batch_empty_message">Esci dalla modalità gruppo per continuare una foto alla volta.</string>
+
+    <!-- Gesture action descriptions -->
+    <string name="action_delete_desc">Aggiungi alla lista di eliminazione</string>
+    <string name="action_keep_desc">Mantieni e contrassegna come organizzata</string>
+    <string name="action_favorite_desc">Aggiungi ai preferiti e mantieni</string>
+    <string name="action_album_desc">Aggiungi a un album</string>
+    <string name="action_skip_desc">Prosegui senza decidere</string>
+    <string name="action_none_desc">Non fare nulla</string>
+
+    <!-- Gesture settings -->
+    <string name="settings_gestures_title">Gesti</string>
+    <string name="settings_gestures_desc">Scegli cosa fa ogni scorrimento.</string>
+    <string name="settings_gestures_album_hint">Le azioni album ti chiedono ogni volta di scegliere un album.</string>
+    <string name="gesture_left">Scorri a sinistra</string>
+    <string name="gesture_right">Scorri a destra</string>
+    <string name="gesture_up">Scorri verso l\'alto</string>
+    <string name="gesture_down">Scorri verso il basso</string>
+    <string name="settings_gestures_reset">Ripristina i valori predefiniti</string>
+    <string name="settings_gesture_demo_title">Prova dei gesti</string>
+    <string name="settings_gesture_demo_hint">Scorri questa scheda per sentire l\'interazione.</string>
+    <string name="settings_gesture_demo_result">Farebbe: %1$s</string>
+    <string name="settings_gesture_demo_none">Nessuna azione associata a questa direzione.</string>
+
+    <!-- Filters -->
+    <string name="filters_title">Scegli le foto</string>
+    <string name="filters_album">Album</string>
+    <string name="filters_album_all">Tutti gli album</string>
+    <string name="filters_media">Tipo di contenuto</string>
+    <string name="filters_media_all">Foto e video</string>
+    <string name="filters_media_photos">Foto</string>
+    <string name="filters_media_videos">Video</string>
+    <string name="filters_date">Intervallo di tempo</string>
+    <string name="filters_date_all">Sempre</string>
+    <string name="filters_date_30">Ultimi 30 giorni</string>
+    <string name="filters_date_90">Ultimi 90 giorni</string>
+    <string name="filters_date_year">Quest\'anno</string>
+    <string name="filters_sort">Ordine</string>
+    <string name="filters_sort_newest">Prima le più recenti</string>
+    <string name="filters_sort_oldest">Prima le più vecchie</string>
+    <string name="filters_sort_largest">Prima le più grandi</string>
+    <string name="filters_sort_random">Casuale</string>
+    <string name="filters_status">Stato di revisione</string>
+    <string name="filters_status_all">Tutto</string>
+    <string name="filters_status_unreviewed">Non ancora esaminate</string>
+    <string name="filters_smart">Scelte intelligenti</string>
+    <string name="filters_smart_none">Disattivato</string>
+    <string name="filters_smart_screenshots">Schermate</string>
+    <string name="filters_smart_duplicates">Possibili duplicati</string>
+    <string name="filters_smart_burst">Scatti a raffica</string>
+    <string name="filters_smart_long_videos">Video lunghi</string>
+    <string name="filters_smart_large_files">File grandi</string>
+    <string name="filters_smart_hint">Scegli prima una cartella.</string>
+    <string name="filters_ai_title">Riconoscimento IA</string>
+    <string name="filters_ai_none">Disattivato</string>
+    <string name="filters_ai_food">Cibo</string>
+    <string name="filters_ai_pet">Animali</string>
+    <string name="filters_ai_document">Documenti</string>
+    <string name="filters_ai_nature">Natura</string>
+    <string name="filters_ai_landmark">Architettura</string>
+    <string name="filters_ai_disabled_hint">Attiva il riconoscimento IA nelle Impostazioni per usarli.</string>
+    <string name="filters_ai_missing_hint">Il modello non è ancora stato scaricato. Scaricalo dalle Impostazioni.</string>
+    <string name="filters_ai_failed_hint">Il download del modello non è riuscito. Riprova dalle Impostazioni.</string>
+    <string name="filters_ai_demo_hint">Il riconoscimento IA analizza solo le foto su questo dispositivo.</string>
+    <string name="filters_ai_hint">Funziona localmente in background. Le nuove foto vengono etichettate automaticamente.</string>
+    <string name="filters_ai_progress">Riconoscimento %1$d / %2$d</string>
+    <string name="filters_start_empty">Nessuna foto corrisponde</string>
+    <string name="filters_reset">Reimposta i filtri</string>
+    <string name="filters_recent">Filtri recenti</string>
+    <string name="filters_recent_all">Tutte le foto</string>
+
+    <!-- Review -->
+    <string name="review_title">Lista di eliminazione</string>
+    <string name="review_select">Seleziona</string>
+    <string name="review_cancel_selection">Annulla</string>
+    <string name="review_select_all">Seleziona tutto</string>
+    <string name="review_deselect_all">Deseleziona tutto</string>
+    <string name="review_remove_selected">Rimuovi %1$d</string>
+    <string name="review_delete_selected">Elimina %1$d</string>
+    <string name="review_clear_all">Svuota la lista</string>
+    <string name="review_empty_title">Niente da eliminare</string>
+    <string name="review_empty_message">Le foto contrassegnate per l\'eliminazione si raccolgono qui. Nessun file viene eliminato.</string>
+    <string name="review_empty_action">Inizia a riordinare</string>
+    <string name="review_clear_title">Svuotare la lista di eliminazione?</string>
+    <string name="review_safety_note">Niente viene eliminato finché Android non ti chiede di confermare.</string>
+    <string name="review_delete_confirm_title">Eliminare dal dispositivo?</string>
+    <string name="review_delete_confirm_message">Si possono eliminare solo le foto salvate su questo dispositivo. Android ti chiede di confermare e gli elementi finiscono nel cestino di sistema, se disponibile.</string>
+    <string name="review_delete_action">Elimina</string>
+    <string name="review_delete_unsupported">L\'eliminazione con conferma di sistema richiede Android 11 o versioni successive.</string>
+    <string name="review_delete_failed">Non è stato eliminato nulla.</string>
+    <string name="review_open_photo">Apri foto</string>
+    <string name="review_selected">%1$d selezionate</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Preferiti</string>
+    <string name="favorites_empty_title">Nessun preferito per ora</string>
+    <string name="favorites_empty_message">Tocca il cuore mentre riordini e le foto che ami si raccoglieranno qui.</string>
+
+    <!-- Search -->
+    <string name="search_hint_title">Cerca nella tua libreria</string>
+    <string name="search_hint_message">Prova con un nome file, un album o una data come 2026-11.</string>
+    <string name="search_empty_title">Nessuna foto trovata</string>
+    <string name="search_empty_message">Prova con una parola più breve o un altro mese.</string>
+    <string name="search_placeholder">Cerca foto</string>
+
+    <!-- Timeline -->
+    <string name="timeline_title">Cronologia</string>
+    <string name="timeline_empty_title">Ancora niente nella cronologia</string>
+    <string name="timeline_empty_message">Le foto compaiono qui raggruppate per mese di scatto.</string>
+    <string name="timeline_month_header">%1$s %2$d</string>
+    <string name="timeline_unknown_date">Data sconosciuta</string>
+    <string name="timeline_subtitle">%1$s · %2$s</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_title">Duplicati</string>
+    <string name="duplicates_subtitle">%1$s · circa %2$s recuperabili</string>
+    <string name="duplicates_keep">Mantieni</string>
+    <string name="duplicates_flag">Da eliminare</string>
+    <string name="duplicates_apply">Mantieni questa</string>
+    <string name="duplicates_skip">Salta</string>
+    <string name="duplicates_restore">Mostra %1$d saltati</string>
+    <string name="duplicates_empty_title">Nessun duplicato trovato</string>
+    <string name="duplicates_empty_message">Le foto vengono confrontate per dimensione e risoluzione esatte. Nulla viene decodificato, quindi resta veloce.</string>
+
+    <!-- Insights -->
+    <string name="insights_title">Ricordi</string>
+    <string name="insights_total">Foto</string>
+    <string name="insights_organized">Organizzate</string>
+    <string name="insights_delete">Da eliminare</string>
+    <string name="insights_favorites">Preferiti</string>
+    <string name="insights_completion">Organizzate</string>
+    <string name="insights_monthly">Foto per mese</string>
+    <string name="insights_session">Questa sessione</string>
+    <string name="insights_session_acted">%1$d di %2$d esaminate</string>
+    <string name="insights_session_delete">%1$d contrassegnate per l\'eliminazione</string>
+    <string name="insights_session_favorites">%1$d preferite</string>
+    <string name="insights_no_session">Inizia una sessione di riordino per vedere i tuoi progressi qui.</string>
+    <string name="insights_chart_empty">Nessuna foto negli ultimi 12 mesi.</string>
+    <string name="insights_month_label">Mese</string>
+    <string name="insights_composition">Equilibrio della libreria</string>
+    <string name="insights_remaining">Non ancora esaminate</string>
+    <string name="insights_monthly_peak">Più attivo: %1$s · %2$d foto</string>
+    <string name="insights_storage">Archiviazione</string>
+    <string name="insights_storage_albums">Album più grandi</string>
+    <string name="insights_storage_empty">Nessun file da misurare per ora.</string>
+    <string name="insights_unknown_album">Altro</string>
+    <string name="insights_reclaim_delete">Contrassegnate per l\'eliminazione</string>
+    <string name="insights_duplicates">Duplicati</string>
+    <string name="insights_duplicates_groups">%1$d gruppi · %2$s recuperabili</string>
+    <string name="insights_duplicates_body">Confrontate per dimensione e risoluzione esatte. Scegli cosa tenere per ogni gruppo.</string>
+    <string name="insights_duplicates_action">Confronta le foto</string>
+    <string name="insights_duplicates_empty">Nessun gruppo di duplicati al momento.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_appearance">Aspetto</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_style">Stile visivo</string>
+    <string name="settings_style_minimal">Minimal</string>
+    <string name="settings_style_glass">Liquid Glass</string>
+    <string name="settings_style_cloud">Fluid Cloud</string>
+    <string name="settings_style_minimal_desc">Superfici solide e calme. Consuma poca batteria.</string>
+    <string name="settings_style_glass_desc">Trasparenza morbida con bordi sottili.</string>
+    <string name="settings_style_cloud_desc">Luce che si muove lenta, viva con delicatezza.</string>
+    <string name="settings_intensity">Intensità dell\'effetto</string>
+    <string name="settings_intensity_value">%1$d%%</string>
+    <string name="settings_animation">Stile di animazione</string>
+    <string name="settings_animation_gentle">Delicata</string>
+    <string name="settings_animation_natural">Naturale</string>
+    <string name="settings_animation_lively">Vivace</string>
+    <string name="settings_animations">Animazioni</string>
+    <string name="settings_animations_desc">Disattivale per un\'esperienza più tranquilla e ferma.</string>
+    <string name="settings_haptics">Feedback tattile</string>
+    <string name="settings_haptics_desc">Un leggero impulso quando un\'azione va a segno.</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_language_system">Segui il sistema</string>
+    <string name="settings_language_zh">简体中文</string>
+    <string name="settings_language_zh_tw">繁體中文</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_ja">日本語</string>
+    <string name="settings_language_ko">한국어</string>
+    <string name="settings_language_es">Español</string>
+    <string name="settings_language_fr">Français</string>
+    <string name="settings_language_it">Italiano</string>
+    <string name="settings_library">Libreria</string>
+    <string name="settings_library_device">Questo dispositivo</string>
+    <string name="settings_library_demo">Libreria demo</string>
+    <string name="settings_library_demo_subtitle">Foto di esempio integrate per provare Photidy.</string>
+    <string name="settings_library_no_access">Accesso alle foto disattivato</string>
+    <string name="settings_library_scanning">Scansione…</string>
+    <string name="settings_library_rescan">Ripeti scansione</string>
+    <string name="settings_library_allow">Consenti accesso</string>
+    <string name="settings_ai">IA sul dispositivo</string>
+    <string name="settings_ai_toggle">Attiva il riconoscimento IA</string>
+    <string name="settings_ai_toggle_desc">Scarica una volta un piccolo modello, poi l\'etichettatura avviene interamente su questo dispositivo. Le foto non vengono mai caricate.</string>
+    <string name="settings_ai_off_note">Facoltativo. Tutto il resto funziona senza.</string>
+    <string name="settings_ai_missing">Modello non ancora scaricato.</string>
+    <string name="settings_ai_downloading">Download %1$d%%</string>
+    <string name="settings_ai_ready">Modello pronto · tutto funziona localmente</string>
+    <string name="settings_ai_scanning">Riconoscimento di %1$d / %2$d foto</string>
+    <string name="settings_ai_failed">Download non riuscito. Controlla la connessione e riprova.</string>
+    <string name="settings_ai_download">Scarica il modello</string>
+    <string name="settings_ai_retry">Riprova</string>
+    <string name="settings_ai_delete">Elimina il modello</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_version">Versione %1$s</string>
+    <string name="settings_privacy_title">Privacy</string>
+    <string name="settings_privacy_body">Photidy funziona interamente sul tuo dispositivo. Nessun account, nessun cloud, nessun tracciamento. Le foto vengono lette solo dopo che concedi l\'accesso, ed eliminare o spostare una foto richiede sempre una conferma nella finestra di Android. Nulla viene mai caricato; il modello IA facoltativo viene scaricato una volta e funziona localmente.</string>
+    <string name="settings_developer_title">Sviluppatore</string>
+    <string name="settings_developer_body">Realizzato con cura da uno sviluppatore indipendente.</string>
+    <string name="settings_support_title">Sostieni lo sviluppatore</string>
+    <string name="settings_support_body">Una piccola offerta mantiene Photidy gratuito e tranquillo.</string>
+    <string name="settings_support_button">Offrimi un caffè</string>
+    <string name="settings_support_coming_soon">In arrivo</string>
+
+    <!-- Photo detail -->
+    <string name="detail_title">Foto</string>
+    <string name="detail_meta">Dettagli</string>
+    <string name="detail_date">Data</string>
+    <string name="detail_resolution">Risoluzione</string>
+    <string name="detail_size">Dimensione</string>
+    <string name="detail_album">Album</string>
+    <string name="detail_status">Stato</string>
+    <string name="detail_duration">Durata</string>
+    <string name="detail_favorite_on">Preferita</string>
+    <string name="detail_favorite_off">Non preferita</string>
+    <string name="detail_status_unreviewed">Non esaminata</string>
+    <string name="detail_status_kept">Mantenuta</string>
+    <string name="detail_status_delete">Contrassegnata per l\'eliminazione</string>
+    <string name="detail_action_favorite">Aggiungi ai preferiti</string>
+    <string name="detail_action_unfavorite">Rimuovi dai preferiti</string>
+    <string name="detail_action_delete">Contrassegna per l\'eliminazione</string>
+    <string name="detail_action_keep">Contrassegna come mantenuta</string>
+    <string name="detail_action_remove_delete">Rimuovi dalla lista di eliminazione</string>
+    <string name="detail_safety_note">Anteprima di sola lettura. Nulla sul tuo dispositivo viene modificato.</string>
+    <string name="detail_not_found">Foto non trovata.</string>
+    <string name="detail_open_preview">Tocca per ingrandire</string>
+    <string name="detail_zoom_hint">Pizzica per lo zoom · tocca due volte per ingrandire</string>
+
+    <!-- Albums -->
+    <string name="album_camera">Fotocamera</string>
+    <string name="album_travel">Viaggi</string>
+    <string name="album_family">Famiglia</string>
+    <string name="album_nature">Natura</string>
+    <string name="album_city">Città</string>
+    <string name="album_food">Cibo</string>
+    <string name="album_pets">Animali</string>
+    <string name="album_other">Altro</string>
+
+    <!-- Plurals -->
+    <plurals name="photo_count">
+        <item quantity="one">%1$d foto</item>
+        <item quantity="other">%1$d foto</item>
+    </plurals>
+    <plurals name="photos_left">
+        <item quantity="one">%1$d foto rimasta</item>
+        <item quantity="other">%1$d foto rimaste</item>
+    </plurals>
+    <plurals name="photos_with_size">
+        <item quantity="one">%1$d foto · %2$s</item>
+        <item quantity="other">%1$d foto · %2$s</item>
+    </plurals>
+    <plurals name="start_with_photos">
+        <item quantity="one">Inizia con %1$d foto</item>
+        <item quantity="other">Inizia con %1$d foto</item>
+    </plurals>
+    <plurals name="review_summary_plural">
+        <item quantity="one">%1$d foto · circa %2$s</item>
+        <item quantity="other">%1$d foto · circa %2$s</item>
+    </plurals>
+    <plurals name="clear_delete_message">
+        <item quantity="one">La foto (%1$d) verrà rimossa da questa lista. Nessun file sul tuo dispositivo verrà eliminato.</item>
+        <item quantity="other">Tutte le %1$d foto verranno rimosse da questa lista. Nessun file sul tuo dispositivo verrà eliminato.</item>
+    </plurals>
+    <plurals name="reviewed_photos_message">
+        <item quantity="one">Hai esaminato %1$d foto.</item>
+        <item quantity="other">Hai esaminato %1$d foto.</item>
+    </plurals>
+    <plurals name="device_photos_found">
+        <item quantity="one">%1$d foto trovata</item>
+        <item quantity="other">%1$d foto trovate</item>
+    </plurals>
+    <plurals name="device_photos_found_limited">
+        <item quantity="one">%1$d foto · accesso limitato</item>
+        <item quantity="other">%1$d foto · accesso limitato</item>
+    </plurals>
+    <plurals name="review_delete_done">
+        <item quantity="one">%1$d foto eliminata</item>
+        <item quantity="other">%1$d foto eliminate</item>
+    </plurals>
+    <plurals name="review_trash_notice">
+        <item quantity="one">%1$d foto è nel cestino di Android · ripristinabile per circa %2$d altro giorno</item>
+        <item quantity="other">%1$d foto sono nel cestino di Android · ripristinabili per circa %2$d altri giorni</item>
+    </plurals>
+    <plurals name="review_trash_notice_unknown">
+        <item quantity="one">%1$d foto è nel cestino di Android e può ancora essere ripristinata lì.</item>
+        <item quantity="other">%1$d foto sono nel cestino di Android e possono ancora essere ripristinate lì.</item>
+    </plurals>
+    <plurals name="timeline_months">
+        <item quantity="one">%1$d mese</item>
+        <item quantity="other">%1$d mesi</item>
+    </plurals>
+    <plurals name="duplicate_groups">
+        <item quantity="one">%1$d gruppo</item>
+        <item quantity="other">%1$d gruppi</item>
+    </plurals>
+    <plurals name="duplicate_others">
+        <item quantity="one">%1$d altra foto verrà contrassegnata per l\'eliminazione · circa %2$s</item>
+        <item quantity="other">%1$d altre foto verranno contrassegnate per l\'eliminazione · circa %2$s</item>
+    </plurals>
+    <plurals name="duplicates_applied">
+        <item quantity="one">%1$d foto contrassegnata per l\'eliminazione</item>
+        <item quantity="other">%1$d foto contrassegnate per l\'eliminazione</item>
+    </plurals>
+    <plurals name="insights_videos">
+        <item quantity="one">%1$d video</item>
+        <item quantity="other">%1$d video</item>
+    </plurals>
+    <plurals name="insights_screenshots">
+        <item quantity="one">%1$d schermata</item>
+        <item quantity="other">%1$d schermate</item>
+    </plurals>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Torna indietro</string>
+    <string name="cd_settings">Apri le impostazioni</string>
+    <string name="cd_search">Cerca foto</string>
+    <string name="cd_clear_search">Cancella la ricerca</string>
+    <string name="cd_change_scope">Scegli un\'altra cartella</string>
+    <string name="cd_undo">Annulla l\'ultima azione</string>
+    <string name="cd_photo">Foto</string>
+    <string name="cd_favorite">Preferita</string>
+    <string name="cd_delete">Contrassegna per l\'eliminazione</string>
+    <string name="cd_keep">Mantieni la foto</string>
+    <string name="cd_album">Aggiungi a un album</string>
+    <string name="cd_skip">Salta la foto</string>
+    <string name="cd_close">Chiudi</string>
+    <string name="cd_select">Seleziona la foto</string>
+    <string name="cd_selected">Selezionata</string>
+    <string name="cd_unselected">Non selezionata</string>
+    <string name="cd_details">Mostra i dettagli della foto</string>
+    <string name="cd_start">Inizia a organizzare</string>
+    <string name="cd_gesture_demo">Scheda di prova dei gesti</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Qualcosa è andato storto.</string>
+
+</resources>

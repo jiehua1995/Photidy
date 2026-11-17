@@ -24,6 +24,8 @@ data class ReviewUiState(
     val totalBytes: Long = 0L,
     /** Real files among the current selection; only these can be deleted from the device. */
     val deletableCount: Int = 0,
+    val trashCount: Int = 0,
+    val trashExpiryMillis: Long = 0L,
 )
 
 sealed interface ReviewEvent {
@@ -54,7 +56,8 @@ class ReviewViewModel : ViewModel() {
     val uiState: StateFlow<ReviewUiState> = combine(
         photoRepository.photos,
         selection,
-    ) { photos, currentSelection ->
+        photoRepository.trashed,
+    ) { photos, currentSelection, trash ->
         val items = photos
             .filter { it.state.decision == PhotoDecision.DELETE_CANDIDATE }
             .sortedByDescending { it.photo.capturedAt }
@@ -67,6 +70,8 @@ class ReviewViewModel : ViewModel() {
             selectedIds = selected,
             totalBytes = items.sumOf { it.photo.sizeBytes },
             deletableCount = items.count { it.photo.id in selected && it.photo.contentUri != null },
+            trashCount = trash.count,
+            trashExpiryMillis = trash.earliestExpiryMillis,
         )
     }.stateIn(
         scope = viewModelScope,

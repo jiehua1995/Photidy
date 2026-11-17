@@ -68,7 +68,7 @@ import app.photidy.core.model.PhotoWithState
 
 @Composable
 fun SearchRoute(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -88,7 +88,7 @@ fun SearchRoute(
 @Composable
 fun SearchScreen(
     state: SearchUiState,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenPhoto: (String) -> Unit,
     onQueryChange: (String) -> Unit,
     onClearQuery: () -> Unit,
@@ -114,11 +114,13 @@ fun SearchScreen(
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                PhotidyIconButton(
-                    icon = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(LocR.string.cd_back),
-                    onClick = onBack,
-                )
+                if (onBack != null) {
+                    PhotidyIconButton(
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(LocR.string.cd_back),
+                        onClick = onBack,
+                    )
+                }
                 SearchField(
                     query = state.query,
                     onQueryChange = onQueryChange,
@@ -290,7 +292,7 @@ private fun SearchTile(
             .background(colors.surface)
             .clickable(onClick = onClick),
     ) {
-        PhotoImage(photo = item.photo, modifier = Modifier.fillMaxSize())
+        PhotoImage(photo = item.photo, modifier = Modifier.fillMaxSize(), thumbnail = true)
         Box(
             modifier = Modifier
                 .fillMaxSize()

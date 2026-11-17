@@ -11,14 +11,12 @@ import app.photidy.core.model.MediaFilter
 import app.photidy.core.model.PhotoFilter
 import app.photidy.core.model.PhotoSort
 import app.photidy.core.model.SmartFilter
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 data class AiProgress(
     val analyzing: Boolean = false,
@@ -35,11 +33,13 @@ data class FiltersUiState(
     val aiModel: AiModelState = AiModelState.NotDownloaded,
     val aiProgress: AiProgress = AiProgress(),
     val hasDevicePhotos: Boolean = false,
+    val recentFilters: List<PhotoFilter> = emptyList(),
 )
 
-private data class AiInfo(
-    val enabled: Boolean,
+private data class FiltersSettings(
+    val aiEnabled: Boolean,
     val model: AiModelState,
+    val recentFilters: List<PhotoFilter>,
 )
 
 class FiltersViewModel : ViewModel() {
@@ -47,18 +47,24 @@ class FiltersViewModel : ViewModel() {
     private val photoRepository = PhotidyGraph.photoRepository
     private val settingsRepository = PhotidyGraph.settingsRepository
     private val aiModelManager = PhotidyGraph.aiModelManager
-    private val aiTagger = PhotidyGraph.aiTagger
 
     /** Reviewed photos stay out of the way by default, so a second pass resumes where it ended. */
     private val defaultFilter = PhotoFilter(unorganizedOnly = true)
     private val filter = MutableStateFlow(defaultFilter)
-    private val aiProgress = MutableStateFlow(AiProgress())
-    private var aiJob: Job? = null
+    private val aiProgress = PhotidyGraph.aiAnalysis.progress.map { scan ->
+        AiProgress(analyzing = scan.running, done = scan.done, total = scan.total)
+    }
 
     private val aiInfo = combine(
         settingsRepository.settings,
         aiModelManager.state,
-    ) { settings, model -> AiInfo(settings.aiRecognitionEnabled, model) }
+    ) { settings, model ->
+        FiltersSettings(
+            aiEnabled = settings.aiRecognitionEnabled,
+            model = model,
+            recentFilters = settings.recentFilters,
+        )
+    }
 
     val uiState: StateFlow<FiltersUiState> = combine(
         filter,
@@ -66,16 +72,17 @@ class FiltersViewModel : ViewModel() {
         photoRepository.albums,
         aiInfo,
         aiProgress,
-    ) { current, photos, albums, ai, progress ->
+    ) { current, photos, albums, info, progress ->
         FiltersUiState(
             isLoading = false,
             filter = current,
             matchCount = current.applyTo(photos, System.currentTimeMillis()).size,
             albums = albums,
-            aiEnabled = ai.enabled,
-            aiModel = ai.model,
+            aiEnabled = info.aiEnabled,
+            aiModel = info.model,
             aiProgress = progress,
             hasDevicePhotos = photos.any { it.photo.contentUri != null },
+            recentFilters = info.recentFilters,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -121,60 +128,34 @@ class FiltersViewModel : ViewModel() {
         updateFilter { it.copy(unorganizedOnly = value) }
     }
 
+    fun applyRecent(recent: PhotoFilter) {
+        filter.value = recent
+    }
+
     fun reset() {
-        aiJob?.cancel()
-        aiProgress.value = AiProgress()
         filter.value = defaultFilter
     }
 
-    suspend fun startSession(): Int = photoRepository.startSession(filter.value)
+    /** Starts a session and remembers the filter so it can be reused from the top of the screen. */
+    suspend fun startSession(): Int {
+        val current = filter.value
+        val count = photoRepository.startSession(current)
+        if (count > 0) {
+            settingsRepository.update { settings ->
+                settings.copy(
+                    recentFilters = (listOf(current) + settings.recentFilters.filterNot { it == current })
+                        .take(MAX_RECENT_FILTERS),
+                )
+            }
+        }
+        return count
+    }
 
     private fun updateFilter(transform: (PhotoFilter) -> PhotoFilter) {
         filter.value = transform(filter.value)
-        // Newly visible photos need labels before the AI filter can match them.
-        if (filter.value.aiTag != null) {
-            startAiAnalysis()
-        }
-    }
-
-    /**
-     * Labels the photos that are currently in scope and were not analyzed yet. Work is capped so
-     * the first batch finishes quickly; the next filter change picks up the rest.
-     */
-    private fun startAiAnalysis() {
-        if (!aiModelManager.isReady() || aiJob?.isActive == true) return
-        aiJob = viewModelScope.launch {
-            val photos = photoRepository.photos.first()
-            val candidates = filter.value
-                .copy(aiTag = null)
-                .applyTo(photos, System.currentTimeMillis())
-                .filter { it.photo.contentUri != null && !it.state.aiAnalyzed }
-                .take(MAX_AI_BATCH)
-            if (candidates.isEmpty()) return@launch
-
-            aiProgress.value = AiProgress(analyzing = true, done = 0, total = candidates.size)
-            val analyzed = HashSet<String>()
-            val tags = HashMap<String, List<AiTag>>()
-            candidates.forEachIndexed { index, item ->
-                val result = aiTagger.analyze(item.photo)
-                analyzed += item.photo.id
-                if (result.isNotEmpty()) tags[item.photo.id] = result
-                aiProgress.value = AiProgress(
-                    analyzing = true,
-                    done = index + 1,
-                    total = candidates.size,
-                )
-            }
-            photoRepository.saveAiTags(analyzed, tags)
-            aiProgress.value = AiProgress(
-                analyzing = false,
-                done = candidates.size,
-                total = candidates.size,
-            )
-        }
     }
 
     private companion object {
-        const val MAX_AI_BATCH = 80
+        const val MAX_RECENT_FILTERS = 3
     }
 }

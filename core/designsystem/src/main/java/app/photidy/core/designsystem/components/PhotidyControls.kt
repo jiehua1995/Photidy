@@ -1,10 +1,13 @@
 package app.photidy.core.designsystem.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,9 +27,11 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -100,6 +105,13 @@ fun PhotidyChip(
 ) {
     val colors = PhotidyTheme.colors
     val animations = PhotidyTheme.animationsEnabled
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed && enabled && animations) 0.96f else 1f,
+        animationSpec = tween(durationMillis = if (animations) 110 else 0),
+        label = "chip-press",
+    )
     val background by animateColorAsState(
         targetValue = when {
             !enabled -> colors.surface.copy(alpha = 0.18f)
@@ -121,6 +133,10 @@ fun PhotidyChip(
     Box(
         modifier = modifier
             .heightIn(min = 40.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .clip(CircleShape)
             .background(background, CircleShape)
             .border(1.dp, borderColor, CircleShape)
@@ -128,6 +144,7 @@ fun PhotidyChip(
                 selected = selected,
                 enabled = enabled,
                 role = Role.RadioButton,
+                interactionSource = interactionSource,
                 onClick = onClick,
             )
             .padding(horizontal = PhotidySpacing.lg, vertical = PhotidySpacing.xs),

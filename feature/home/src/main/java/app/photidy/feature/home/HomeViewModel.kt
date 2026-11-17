@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.photidy.core.data.LibraryState
 import app.photidy.core.data.PhotidyGraph
-import app.photidy.core.model.InsightsCalculator
+import app.photidy.core.model.LibraryStatsCalculator
 import app.photidy.core.model.LibraryMode
 import app.photidy.core.model.PhotoItem
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,8 +38,7 @@ class HomeViewModel : ViewModel() {
         settingsRepository.settings,
         photoRepository.libraryState,
     ) { photos, snapshot, settings, library ->
-        val now = System.currentTimeMillis()
-        val insights = InsightsCalculator.calculate(photos, snapshot.session, now)
+        val stats = LibraryStatsCalculator.calculate(photos)
         val session = snapshot.session
         val active = session?.takeUnless { it.isComplete }
 
@@ -52,11 +51,11 @@ class HomeViewModel : ViewModel() {
 
         HomeUiState(
             isLoading = false,
-            totalPhotos = insights.totalPhotos,
-            organizedCount = insights.organizedCount,
-            favoriteCount = insights.favoriteCount,
-            deleteCount = insights.deleteCandidateCount,
-            deleteBytes = insights.reclaimBytes,
+            totalPhotos = stats.total,
+            organizedCount = stats.organized,
+            favoriteCount = stats.favorites,
+            deleteCount = stats.deleteCount,
+            deleteBytes = stats.deleteBytes,
             activeSessionRemaining = active?.remaining,
             sessionCompleted = session?.isComplete == true,
             previewPhotos = previews,

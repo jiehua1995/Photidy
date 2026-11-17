@@ -34,6 +34,8 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.photidy.core.data.AiModelState
+import app.photidy.core.data.AiScanProgress
 import app.photidy.core.data.LibraryState
 import app.photidy.core.designsystem.components.PhotidyBadge
 import app.photidy.core.designsystem.components.PhotidyBadgeTone
@@ -101,6 +104,7 @@ fun SettingsRoute(
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val library by viewModel.library.collectAsStateWithLifecycle()
     val aiModel by viewModel.aiModel.collectAsStateWithLifecycle()
+    val aiProgress by viewModel.aiProgress.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -116,6 +120,7 @@ fun SettingsRoute(
         settings = settings,
         library = library,
         aiModel = aiModel,
+        aiProgress = aiProgress,
         appVersion = appVersion,
         onBack = onBack,
         onThemeSelected = viewModel::setThemeMode,
@@ -142,6 +147,7 @@ fun SettingsScreen(
     settings: AppSettings,
     library: LibraryState,
     aiModel: AiModelState,
+    aiProgress: AiScanProgress,
     appVersion: String,
     onBack: () -> Unit,
     onThemeSelected: (ThemeMode) -> Unit,
@@ -205,6 +211,7 @@ fun SettingsScreen(
                             AiCard(
                                 enabled = settings.aiRecognitionEnabled,
                                 state = aiModel,
+                                progress = aiProgress,
                                 onToggle = onAiToggled,
                                 onDownload = onDownloadAiModel,
                                 onDelete = onDeleteAiModel,
@@ -252,6 +259,7 @@ fun SettingsScreen(
                         AiCard(
                             enabled = settings.aiRecognitionEnabled,
                             state = aiModel,
+                            progress = aiProgress,
                             onToggle = onAiToggled,
                             onDownload = onDownloadAiModel,
                             onDelete = onDeleteAiModel,
@@ -392,6 +400,7 @@ private fun LibraryRow(
 private fun AiCard(
     enabled: Boolean,
     state: AiModelState,
+    progress: AiScanProgress,
     onToggle: (Boolean) -> Unit,
     onDownload: () -> Unit,
     onDelete: () -> Unit,
@@ -429,11 +438,29 @@ private fun AiCard(
                 PhotidyProgressLine(progress = state.progress)
             }
 
-            state is AiModelState.Ready -> AiStatusRow(
-                text = stringResource(LocR.string.settings_ai_ready),
-                actionLabel = stringResource(LocR.string.settings_ai_delete),
-                onAction = onDelete,
-            )
+            state is AiModelState.Ready -> {
+                AiStatusRow(
+                    text = stringResource(LocR.string.settings_ai_ready),
+                    actionLabel = stringResource(LocR.string.settings_ai_delete),
+                    onAction = onDelete,
+                )
+                if (progress.running && progress.total > 0) {
+                    Spacer(Modifier.height(PhotidySpacing.xs))
+                    Text(
+                        text = stringResource(
+                            LocR.string.settings_ai_scanning,
+                            progress.done,
+                            progress.total,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textSecondary,
+                    )
+                    Spacer(Modifier.height(PhotidySpacing.xxs))
+                    PhotidyProgressLine(
+                        progress = progress.done.toFloat() / progress.total,
+                    )
+                }
+            }
 
             state is AiModelState.Failed -> AiStatusRow(
                 text = stringResource(LocR.string.settings_ai_failed),
@@ -842,61 +869,89 @@ private fun LanguageCard(
     onLanguageSelected: (AppLanguage) -> Unit,
 ) {
     val colors = Theme.colors
+    var expanded by remember { mutableStateOf(false) }
     PhotidySurface(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(PhotidySpacing.lg),
     ) {
         PhotidySectionHeader(title = stringResource(LocR.string.settings_language))
         Spacer(Modifier.height(PhotidySpacing.xs))
-        LanguageRow(
-            label = stringResource(LocR.string.settings_language_system),
-            selected = settings.language == AppLanguage.SYSTEM,
-            onClick = { onLanguageSelected(AppLanguage.SYSTEM) },
-        )
-        LanguageRow(
-            label = stringResource(LocR.string.settings_language_zh),
-            selected = settings.language == AppLanguage.CHINESE,
-            onClick = { onLanguageSelected(AppLanguage.CHINESE) },
-        )
-        LanguageRow(
-            label = stringResource(LocR.string.settings_language_en),
-            selected = settings.language == AppLanguage.ENGLISH,
-            onClick = { onLanguageSelected(AppLanguage.ENGLISH) },
-        )
+        Box {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { expanded = true }
+                    .padding(vertical = PhotidySpacing.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = languageLabel(settings.language),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.textPrimary,
+                    modifier = Modifier.weight(1f),
+                )
+                Icon(
+                    imageVector = if (expanded) {
+                        Icons.Filled.KeyboardArrowUp
+                    } else {
+                        Icons.Filled.KeyboardArrowDown
+                    },
+                    contentDescription = null,
+                    tint = colors.textTertiary,
+                )
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                containerColor = colors.surface,
+            ) {
+                AppLanguage.entries.forEach { language ->
+                    val selected = language == settings.language
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = languageLabel(language),
+                                color = if (selected) colors.accent else colors.textPrimary,
+                            )
+                        },
+                        trailingIcon = if (selected) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = stringResource(LocR.string.cd_selected),
+                                    tint = colors.accent,
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                        onClick = {
+                            expanded = false
+                            onLanguageSelected(language)
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun LanguageRow(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    val colors = Theme.colors
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .padding(vertical = PhotidySpacing.sm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = colors.textPrimary,
-            modifier = Modifier.weight(1f),
-        )
-        if (selected) {
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = stringResource(LocR.string.cd_selected),
-                tint = colors.accent,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-    }
-}
+private fun languageLabel(language: AppLanguage): String = stringResource(
+    when (language) {
+        AppLanguage.SYSTEM -> LocR.string.settings_language_system
+        AppLanguage.CHINESE -> LocR.string.settings_language_zh
+        AppLanguage.CHINESE_TRADITIONAL -> LocR.string.settings_language_zh_tw
+        AppLanguage.ENGLISH -> LocR.string.settings_language_en
+        AppLanguage.GERMAN -> LocR.string.settings_language_de
+        AppLanguage.JAPANESE -> LocR.string.settings_language_ja
+        AppLanguage.KOREAN -> LocR.string.settings_language_ko
+        AppLanguage.SPANISH -> LocR.string.settings_language_es
+        AppLanguage.FRENCH -> LocR.string.settings_language_fr
+        AppLanguage.ITALIAN -> LocR.string.settings_language_it
+    },
+)
 
 @Composable
 private fun AboutCard(appVersion: String) {
@@ -991,6 +1046,7 @@ private fun SettingsScreenPreview() {
             settings = AppSettings(),
             library = LibraryState(),
             aiModel = AiModelState.NotDownloaded,
+            aiProgress = AiScanProgress(),
             appVersion = "0.1.0",
             onBack = {},
             onThemeSelected = {},
