@@ -12,6 +12,14 @@ enum class AiTag {
     LANDMARK,
 }
 
+/** Downloadable model sizes. Larger tiers trade speed for better recognition. */
+@Serializable
+enum class AiModelTier {
+    LIGHT,
+    BALANCED,
+    ACCURATE,
+}
+
 /**
  * Maps ImageNet-style label strings onto a handful of friendly categories. Pure and
  * deterministic so the mapping can be unit tested without the model or Android.

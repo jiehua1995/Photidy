@@ -8,6 +8,7 @@ import app.photidy.core.data.LibraryState
 import app.photidy.core.data.PhotidyGraph
 import app.photidy.core.localization.LocaleController
 import app.photidy.core.model.AnimationStyle
+import app.photidy.core.model.AiModelTier
 import app.photidy.core.model.AppLanguage
 import app.photidy.core.model.AppSettings
 import app.photidy.core.model.GestureAction
@@ -18,6 +19,7 @@ import app.photidy.core.model.ThemeMode
 import app.photidy.core.model.VisualStyle
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,16 +40,30 @@ class SettingsViewModel : ViewModel() {
 
     val aiProgress: StateFlow<AiScanProgress> = PhotidyGraph.aiAnalysis.progress
 
-    /** Turning the feature on fetches the small model once; turning it off stops a download. */
+    /** Turning the feature on fetches the selected model once; turning it off stops a download. */
     fun setAiRecognition(enabled: Boolean) {
         viewModelScope.launch {
+            val tier = settingsRepository.settings.first().aiModelTier
             settingsRepository.update { it.copy(aiRecognitionEnabled = enabled) }
+            PhotidyGraph.aiModelManager.setTier(tier)
             if (enabled) {
-                if (!PhotidyGraph.aiModelManager.isReady()) {
+                if (!PhotidyGraph.aiModelManager.isReady(tier)) {
                     PhotidyGraph.aiModelManager.download()
                 }
             } else {
                 PhotidyGraph.aiModelManager.cancelDownload()
+            }
+        }
+    }
+
+    /** Switches model tier; when AI is already on, the new model downloads immediately. */
+    fun setAiModelTier(tier: AiModelTier) {
+        viewModelScope.launch {
+            val enabled = settingsRepository.settings.first().aiRecognitionEnabled
+            settingsRepository.update { it.copy(aiModelTier = tier) }
+            PhotidyGraph.aiModelManager.setTier(tier)
+            if (enabled && !PhotidyGraph.aiModelManager.isReady(tier)) {
+                PhotidyGraph.aiModelManager.download()
             }
         }
     }

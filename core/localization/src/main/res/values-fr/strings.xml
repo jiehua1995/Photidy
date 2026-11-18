@@ -304,6 +304,13 @@
     <string name="settings_ai_download">Télécharger le modèle</string>
     <string name="settings_ai_retry">Réessayer</string>
     <string name="settings_ai_delete">Supprimer le modèle</string>
+    <string name="settings_ai_tier_title">Qualité du modèle</string>
+    <string name="settings_ai_tier_light">Léger</string>
+    <string name="settings_ai_tier_balanced">Équilibré</string>
+    <string name="settings_ai_tier_accurate">Précis</string>
+    <string name="settings_ai_tier_light_desc">Environ 4 Mo · le plus rapide, reconnaissance de base</string>
+    <string name="settings_ai_tier_balanced_desc">Environ 6 Mo · nettement plus précis, toujours rapide</string>
+    <string name="settings_ai_tier_accurate_desc">Environ 8 Mo · meilleure précision, un peu plus lent</string>
     <string name="settings_about">À propos</string>
     <string name="settings_version">Version %1$s</string>
     <string name="settings_privacy_title">Confidentialité</string>

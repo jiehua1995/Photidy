@@ -304,6 +304,13 @@
     <string name="settings_ai_download">モデルをダウンロード</string>
     <string name="settings_ai_retry">再試行</string>
     <string name="settings_ai_delete">モデルを削除</string>
+    <string name="settings_ai_tier_title">モデル精度</string>
+    <string name="settings_ai_tier_light">軽量</string>
+    <string name="settings_ai_tier_balanced">バランス</string>
+    <string name="settings_ai_tier_accurate">高精度</string>
+    <string name="settings_ai_tier_light_desc">約 4 MB · 最速、基本の認識</string>
+    <string name="settings_ai_tier_balanced_desc">約 6 MB · 認識精度が向上、動作は軽快</string>
+    <string name="settings_ai_tier_accurate_desc">約 8 MB · 最高精度、やや低速</string>
     <string name="settings_about">このアプリについて</string>
     <string name="settings_version">バージョン %1$s</string>
     <string name="settings_privacy_title">プライバシー</string>

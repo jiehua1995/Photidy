@@ -3,6 +3,7 @@ package app.photidy.core.data
 import android.content.IntentSender
 import android.net.Uri
 import app.photidy.core.model.Album
+import app.photidy.core.model.AiModelTier
 import app.photidy.core.model.AiTag
 import app.photidy.core.model.GestureAction
 import app.photidy.core.model.LibraryMode
@@ -334,6 +335,7 @@ class PhotoRepository(
     suspend fun saveAiTags(
         analyzedIds: Set<String>,
         tagsByPhoto: Map<String, List<AiTag>>,
+        tier: AiModelTier,
     ) {
         if (analyzedIds.isEmpty()) return
         store.update { snapshot ->
@@ -341,7 +343,33 @@ class PhotoRepository(
             analyzedIds.forEach { id ->
                 val current = states[id] ?: PhotoState.Initial
                 val tags = tagsByPhoto[id].orEmpty().distinct()
-                states = states + (id to current.copy(aiTags = tags, aiAnalyzed = true))
+                states = states + (id to current.copy(
+                    aiTags = tags,
+                    aiAnalyzed = true,
+                    aiModelTier = tier,
+                ))
+            }
+            snapshot.copy(states = states)
+        }
+    }
+
+    /** Drops labels produced by a previous model tier so they can be regenerated. */
+    suspend fun resetAiTags(photoIds: Set<String>) {
+        if (photoIds.isEmpty()) return
+        store.update { snapshot ->
+            var states = snapshot.states
+            photoIds.forEach { id ->
+                val current = states[id] ?: return@forEach
+                val next = current.copy(
+                    aiTags = emptyList(),
+                    aiAnalyzed = false,
+                    aiModelTier = null,
+                )
+                states = if (next == PhotoState.Initial) {
+                    states - id
+                } else {
+                    states + (id to next)
+                }
             }
             snapshot.copy(states = states)
         }

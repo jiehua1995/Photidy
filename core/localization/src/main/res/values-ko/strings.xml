@@ -304,6 +304,13 @@
     <string name="settings_ai_download">모델 다운로드</string>
     <string name="settings_ai_retry">다시 시도</string>
     <string name="settings_ai_delete">모델 삭제</string>
+    <string name="settings_ai_tier_title">모델 정확도</string>
+    <string name="settings_ai_tier_light">가벼움</string>
+    <string name="settings_ai_tier_balanced">균형</string>
+    <string name="settings_ai_tier_accurate">정확</string>
+    <string name="settings_ai_tier_light_desc">약 4 MB · 가장 빠름, 기본 인식</string>
+    <string name="settings_ai_tier_balanced_desc">약 6 MB · 인식이 더 정확하고 여전히 빠름</string>
+    <string name="settings_ai_tier_accurate_desc">약 8 MB · 가장 정확하지만 조금 느림</string>
     <string name="settings_about">정보</string>
     <string name="settings_version">버전 %1$s</string>
     <string name="settings_privacy_title">개인정보 보호</string>

@@ -1,6 +1,7 @@
 package app.photidy.core.data
 
 import android.content.Context
+import app.photidy.core.model.AiModelTier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.File
@@ -17,65 +20,111 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.zip.ZipInputStream
 
-/** State of the optional on-device classification model. */
+/** State of the optional on-device classification model for the selected tier. */
 sealed interface AiModelState {
-    data object NotDownloaded : AiModelState
+    val tier: AiModelTier
 
-    data class Downloading(val progress: Float) : AiModelState
+    data class NotDownloaded(override val tier: AiModelTier) : AiModelState
 
-    data object Ready : AiModelState
+    data class Downloading(override val tier: AiModelTier, val progress: Float) : AiModelState
 
-    data object Failed : AiModelState
+    data class Ready(override val tier: AiModelTier) : AiModelState
+
+    data class Failed(override val tier: AiModelTier) : AiModelState
 }
 
 /**
- * Downloads and stores the small MobileNet model used for optional local tagging.
- * The archive is intentionally tiny (about 3 MB) and is only fetched after the user
- * opts in; nothing about the photo library leaves the device.
+ * Downloads and stores one optional ImageNet classifier. Three sizes are available; only the
+ * selected tier is kept on disk. Nothing is fetched until the user opts in, and the photo
+ * library never leaves the device.
  */
-class AiModelManager(private val context: Context) {
+class AiModelManager(
+    private val context: Context,
+    private val settingsRepository: SettingsRepository,
+) {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val directory = File(context.filesDir, "ai")
-    private val modelFile = File(directory, MODEL_FILE)
-    private val labelsFile = File(directory, LABELS_FILE)
     private var job: Job? = null
 
-    private val _state = MutableStateFlow<AiModelState>(
-        if (isReady()) AiModelState.Ready else AiModelState.NotDownloaded,
-    )
+    @Volatile
+    private var tier: AiModelTier = AiModelTier.LIGHT
+
+    private val _state = MutableStateFlow<AiModelState>(stateFor(AiModelTier.LIGHT))
     val state: StateFlow<AiModelState> = _state.asStateFlow()
 
-    fun isReady(): Boolean =
-        modelFile.length() > MIN_MODEL_BYTES && labelsFile.length() > 0L
+    init {
+        migrateLegacyModel()
+        _state.value = stateFor(tier)
+        scope.launch {
+            settingsRepository.settings
+                .map { it.aiModelTier }
+                .distinctUntilChanged()
+                .collect(::setTier)
+        }
+    }
 
-    fun modelFile(): File = modelFile
+    fun isReady(tier: AiModelTier = this.tier): Boolean {
+        val file = AiModelSpecs.of(tier).fileFor(directory)
+        return file.length() >= AiModelSpecs.of(tier).minBytes
+    }
 
-    fun labelsFile(): File = labelsFile
+    fun modelFile(tier: AiModelTier = this.tier): File = AiModelSpecs.of(tier).fileFor(directory)
+
+    fun currentTier(): AiModelTier = tier
+
+    /** Switches tiers immediately; an in-flight download for the old tier is cancelled. */
+    fun setTier(selected: AiModelTier) {
+        if (selected == tier) return
+        job?.cancel()
+        job = null
+        tier = selected
+        _state.value = stateFor(selected)
+    }
 
     fun download() {
         if (job?.isActive == true) return
+        val targetTier = tier
+        val spec = AiModelSpecs.of(targetTier)
         job = scope.launch {
-            _state.value = AiModelState.Downloading(0f)
+            _state.value = AiModelState.Downloading(targetTier, 0f)
             val tempDirectory = File(context.cacheDir, "ai-download").apply {
                 deleteRecursively()
                 mkdirs()
             }
             try {
-                val archive = File(tempDirectory, "model.zip")
-                downloadArchive(archive, isCancelled = { !isActive }) { progress ->
-                    _state.value = AiModelState.Downloading(progress)
+                val payload = File(tempDirectory, "download.bin")
+                downloadFile(
+                    url = spec.url,
+                    target = payload,
+                    isCancelled = { !isActive || tier != targetTier },
+                ) { progress ->
+                    if (tier == targetTier) {
+                        _state.value = AiModelState.Downloading(targetTier, progress)
+                    }
                 }
-                extract(archive, tempDirectory)
+                val model = if (spec.archiveEntry != null) {
+                    extractEntry(payload, spec.archiveEntry, File(tempDirectory, "model.tflite"))
+                } else {
+                    payload
+                }
+                if (model.length() < spec.minBytes) error("Truncated model")
                 directory.mkdirs()
-                File(tempDirectory, MODEL_FILE).copyTo(modelFile, overwrite = true)
-                File(tempDirectory, LABELS_FILE).copyTo(labelsFile, overwrite = true)
-                _state.value = if (isReady()) AiModelState.Ready else AiModelState.Failed
+                model.copyTo(spec.fileFor(directory), overwrite = true)
+                // Keep a single model on disk so switching tiers never accumulates files.
+                AiModelTier.entries
+                    .filter { it != targetTier }
+                    .forEach { AiModelSpecs.of(it).fileFor(directory).delete() }
+                _state.value = when {
+                    tier != targetTier -> stateFor(tier)
+                    isReady(targetTier) -> AiModelState.Ready(targetTier)
+                    else -> AiModelState.Failed(targetTier)
+                }
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Throwable) {
                 // The URL, stack trace or response body must never end up in logs.
-                _state.value = AiModelState.Failed
+                if (tier == targetTier) _state.value = AiModelState.Failed(targetTier)
             } finally {
                 tempDirectory.deleteRecursively()
             }
@@ -88,23 +137,26 @@ class AiModelManager(private val context: Context) {
         job = null
         File(context.cacheDir, "ai-download").deleteRecursively()
         if (_state.value is AiModelState.Downloading) {
-            _state.value = if (isReady()) AiModelState.Ready else AiModelState.NotDownloaded
+            _state.value = stateFor(tier)
         }
     }
 
     fun deleteModel() {
         cancelDownload()
-        modelFile.delete()
-        labelsFile.delete()
-        _state.value = AiModelState.NotDownloaded
+        AiModelTier.entries.forEach { AiModelSpecs.of(it).fileFor(directory).delete() }
+        _state.value = stateFor(tier)
     }
 
-    private fun downloadArchive(
+    private fun stateFor(tier: AiModelTier): AiModelState =
+        if (isReady(tier)) AiModelState.Ready(tier) else AiModelState.NotDownloaded(tier)
+
+    private fun downloadFile(
+        url: String,
         target: File,
         isCancelled: () -> Boolean,
         onProgress: (Float) -> Unit,
     ) {
-        val connection = (URL(MODEL_URL).openConnection() as HttpURLConnection).apply {
+        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
             connectTimeout = 20_000
             readTimeout = 30_000
             instanceFollowRedirects = true
@@ -139,36 +191,89 @@ class AiModelManager(private val context: Context) {
         }
     }
 
-    private fun extract(archive: File, targetDirectory: File) {
+    private fun extractEntry(archive: File, entryName: String, target: File): File {
         ZipInputStream(FileInputStream(archive)).use { input ->
             var entry = input.nextEntry
             while (entry != null) {
-                val name = entry.name.substringAfterLast('/')
-                if (!entry.isDirectory && name in ARCHIVE_ENTRIES) {
-                    File(targetDirectory, name).outputStream().use { output ->
-                        input.copyTo(output)
-                    }
+                if (!entry.isDirectory && entry.name.substringAfterLast('/') == entryName) {
+                    target.outputStream().use { output -> input.copyTo(output) }
+                    return target
                 }
                 input.closeEntry()
                 entry = input.nextEntry
             }
         }
+        error("Model entry missing")
     }
 
-    companion object {
-        /**
-         * Official TensorFlow Lite sample archive. It bundles a quantized MobileNet V1
-         * classifier (224x224, uint8) plus its ImageNet label list.
-         */
-        const val MODEL_URL =
-            "https://storage.googleapis.com/download.tensorflow.org/models/tflite/" +
-                "mobilenet_v1_1.0_224_quant_and_labels.zip"
-        const val MODEL_FILE = "mobilenet_v1_1.0_224_quant.tflite"
-        const val LABELS_FILE = "labels_mobilenet_quant_v1_224.txt"
-
-        private val ARCHIVE_ENTRIES = setOf(MODEL_FILE, LABELS_FILE)
-
-        // A truncated archive is far smaller than this; the real model is ~4.1 MB.
-        private const val MIN_MODEL_BYTES = 3L * 1024 * 1024
+    /**
+     * Older builds stored a single MobileNet file plus a label list. Keep the model so
+     * existing installs do not silently lose AI tagging after updating.
+     */
+    private fun migrateLegacyModel() {
+        directory.mkdirs()
+        val light = AiModelSpecs.of(AiModelTier.LIGHT)
+        val legacyModel = File(directory, LEGACY_MODEL_FILE)
+        val target = light.fileFor(directory)
+        if (!target.exists() && legacyModel.length() >= light.minBytes) {
+            runCatching { legacyModel.copyTo(target, overwrite = true) }
+        }
+        legacyModel.delete()
+        File(directory, LEGACY_LABELS_FILE).delete()
     }
+
+    private companion object {
+        const val LEGACY_MODEL_FILE = "mobilenet_v1_1.0_224_quant.tflite"
+        const val LEGACY_LABELS_FILE = "labels_mobilenet_quant_v1_224.txt"
+    }
+}
+
+internal data class AiModelSpec(
+    val tier: AiModelTier,
+    val url: String,
+    /** Zip entry to extract, or null when [url] points straight at a .tflite file. */
+    val archiveEntry: String?,
+    val fileName: String,
+    val minBytes: Long,
+) {
+    fun fileFor(directory: File): File = File(directory, fileName)
+}
+
+internal object AiModelSpecs {
+
+    private const val MOBILENET_V1_ARCHIVE =
+        "https://storage.googleapis.com/download.tensorflow.org/models/tflite/" +
+            "mobilenet_v1_1.0_224_quant_and_labels.zip"
+    private const val EFFICIENTNET_LITE0 =
+        "https://storage.googleapis.com/mediapipe-models/image_classifier/" +
+            "efficientnet_lite0/int8/1/efficientnet_lite0.tflite"
+    private const val EFFICIENTNET_LITE2 =
+        "https://storage.googleapis.com/mediapipe-models/image_classifier/" +
+            "efficientnet_lite2/int8/1/efficientnet_lite2.tflite"
+
+    private val specs: Map<AiModelTier, AiModelSpec> = listOf(
+        AiModelSpec(
+            tier = AiModelTier.LIGHT,
+            url = MOBILENET_V1_ARCHIVE,
+            archiveEntry = "mobilenet_v1_1.0_224_quant.tflite",
+            fileName = "model_light.tflite",
+            minBytes = 3L * 1024 * 1024,
+        ),
+        AiModelSpec(
+            tier = AiModelTier.BALANCED,
+            url = EFFICIENTNET_LITE0,
+            archiveEntry = null,
+            fileName = "model_balanced.tflite",
+            minBytes = 4L * 1024 * 1024,
+        ),
+        AiModelSpec(
+            tier = AiModelTier.ACCURATE,
+            url = EFFICIENTNET_LITE2,
+            archiveEntry = null,
+            fileName = "model_accurate.tflite",
+            minBytes = 6L * 1024 * 1024,
+        ),
+    ).associateBy { it.tier }
+
+    fun of(tier: AiModelTier): AiModelSpec = specs.getValue(tier)
 }

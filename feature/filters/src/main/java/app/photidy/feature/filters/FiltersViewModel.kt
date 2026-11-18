@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.photidy.core.data.AiModelState
 import app.photidy.core.data.PhotidyGraph
+import app.photidy.core.model.AiModelTier
 import app.photidy.core.model.AiTag
 import app.photidy.core.model.Album
 import app.photidy.core.model.DateRangeFilter
@@ -30,7 +31,7 @@ data class FiltersUiState(
     val matchCount: Int = 0,
     val albums: List<Album> = emptyList(),
     val aiEnabled: Boolean = false,
-    val aiModel: AiModelState = AiModelState.NotDownloaded,
+    val aiModel: AiModelState = AiModelState.NotDownloaded(AiModelTier.LIGHT),
     val aiProgress: AiProgress = AiProgress(),
     val hasDevicePhotos: Boolean = false,
     val recentFilters: List<PhotoFilter> = emptyList(),

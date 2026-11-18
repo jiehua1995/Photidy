@@ -68,6 +68,8 @@ data class PhotoState(
     val aiTags: List<AiTag> = emptyList(),
     /** True once the on-device model has looked at the photo, even without a match. */
     val aiAnalyzed: Boolean = false,
+    /** Tier that produced [aiTags]; null before any model ran. */
+    val aiModelTier: AiModelTier? = null,
 ) {
     val isReviewed: Boolean
         get() = decision != PhotoDecision.UNREVIEWED

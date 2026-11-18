@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- 本地 AI 识别新增轻量 / 均衡 / 精准三档模型（MobileNet V1、EfficientNet-Lite0、EfficientNet-Lite2，约 4 / 6 / 8 MB），切换档位后自动用新模型重新识别整个照片库
+- 内置 ImageNet 1000 类标签，修正旧版标签整体偏移一位的问题
+
 ### Changed
 
 - README 默认中文，新增英文版 `README.en.md`；技术栈、模块结构与构建流程移入 `docs/DEVELOPMENT.md`

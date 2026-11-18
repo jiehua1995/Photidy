@@ -83,6 +83,7 @@ import app.photidy.core.designsystem.theme.PhotidyWidthClass
 import app.photidy.core.designsystem.theme.rememberPhotidyWidthClass
 import app.photidy.core.localization.R as LocR
 import app.photidy.core.model.AnimationStyle
+import app.photidy.core.model.AiModelTier
 import app.photidy.core.model.AppLanguage
 import app.photidy.core.model.AppSettings
 import app.photidy.core.model.GestureAction
@@ -136,6 +137,7 @@ fun SettingsRoute(
         onRefreshLibrary = viewModel::refreshLibrary,
         onRequestAccess = { permissionLauncher.launch(PhotoAccess.requestPermissions()) },
         onAiToggled = viewModel::setAiRecognition,
+        onAiTierSelected = viewModel::setAiModelTier,
         onDownloadAiModel = viewModel::downloadAiModel,
         onDeleteAiModel = viewModel::deleteAiModel,
         modifier = modifier,
@@ -163,6 +165,7 @@ fun SettingsScreen(
     onRefreshLibrary: () -> Unit,
     onRequestAccess: () -> Unit,
     onAiToggled: (Boolean) -> Unit,
+    onAiTierSelected: (AiModelTier) -> Unit,
     onDownloadAiModel: () -> Unit,
     onDeleteAiModel: () -> Unit,
     modifier: Modifier = Modifier,
@@ -210,9 +213,11 @@ fun SettingsScreen(
                             )
                             AiCard(
                                 enabled = settings.aiRecognitionEnabled,
+                                tier = settings.aiModelTier,
                                 state = aiModel,
                                 progress = aiProgress,
                                 onToggle = onAiToggled,
+                                onTierSelected = onAiTierSelected,
                                 onDownload = onDownloadAiModel,
                                 onDelete = onDeleteAiModel,
                             )
@@ -258,9 +263,11 @@ fun SettingsScreen(
                         )
                         AiCard(
                             enabled = settings.aiRecognitionEnabled,
+                            tier = settings.aiModelTier,
                             state = aiModel,
                             progress = aiProgress,
                             onToggle = onAiToggled,
+                            onTierSelected = onAiTierSelected,
                             onDownload = onDownloadAiModel,
                             onDelete = onDeleteAiModel,
                         )
@@ -399,9 +406,11 @@ private fun LibraryRow(
 @Composable
 private fun AiCard(
     enabled: Boolean,
+    tier: AiModelTier,
     state: AiModelState,
     progress: AiScanProgress,
     onToggle: (Boolean) -> Unit,
+    onTierSelected: (AiModelTier) -> Unit,
     onDownload: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -418,65 +427,105 @@ private fun AiCard(
                 PhotidySwitch(checked = enabled, onCheckedChange = onToggle)
             },
         )
-        when {
-            !enabled -> Text(
+        if (!enabled) {
+            Text(
                 text = stringResource(LocR.string.settings_ai_off_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textTertiary,
             )
-
-            state is AiModelState.Downloading -> {
-                Text(
-                    text = stringResource(
-                        LocR.string.settings_ai_downloading,
-                        (state.progress * 100).roundToInt(),
+        } else {
+            Spacer(Modifier.height(PhotidySpacing.xs))
+            Text(
+                text = stringResource(LocR.string.settings_ai_tier_title),
+                style = MaterialTheme.typography.labelMedium,
+                color = colors.textSecondary,
+            )
+            Spacer(Modifier.height(PhotidySpacing.xxs))
+            PhotidySegmentedControl(
+                options = listOf(
+                    PhotidySegment(AiModelTier.LIGHT, stringResource(LocR.string.settings_ai_tier_light)),
+                    PhotidySegment(
+                        AiModelTier.BALANCED,
+                        stringResource(LocR.string.settings_ai_tier_balanced),
                     ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.textSecondary,
-                )
-                Spacer(Modifier.height(PhotidySpacing.xs))
-                PhotidyProgressLine(progress = state.progress)
-            }
-
-            state is AiModelState.Ready -> {
-                AiStatusRow(
-                    text = stringResource(LocR.string.settings_ai_ready),
-                    actionLabel = stringResource(LocR.string.settings_ai_delete),
-                    onAction = onDelete,
-                )
-                if (progress.running && progress.total > 0) {
-                    Spacer(Modifier.height(PhotidySpacing.xs))
+                    PhotidySegment(
+                        AiModelTier.ACCURATE,
+                        stringResource(LocR.string.settings_ai_tier_accurate),
+                    ),
+                ),
+                selected = tier,
+                onSelect = onTierSelected,
+            )
+            Spacer(Modifier.height(PhotidySpacing.xxs))
+            Text(
+                text = aiTierDescription(tier),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.textTertiary,
+            )
+            Spacer(Modifier.height(PhotidySpacing.sm))
+            when (state) {
+                is AiModelState.Downloading -> {
                     Text(
                         text = stringResource(
-                            LocR.string.settings_ai_scanning,
-                            progress.done,
-                            progress.total,
+                            LocR.string.settings_ai_downloading,
+                            (state.progress * 100).roundToInt(),
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = colors.textSecondary,
                     )
-                    Spacer(Modifier.height(PhotidySpacing.xxs))
-                    PhotidyProgressLine(
-                        progress = progress.done.toFloat() / progress.total,
-                    )
+                    Spacer(Modifier.height(PhotidySpacing.xs))
+                    PhotidyProgressLine(progress = state.progress)
                 }
+
+                is AiModelState.Ready -> {
+                    AiStatusRow(
+                        text = stringResource(LocR.string.settings_ai_ready),
+                        actionLabel = stringResource(LocR.string.settings_ai_delete),
+                        onAction = onDelete,
+                    )
+                    if (progress.running && progress.total > 0) {
+                        Spacer(Modifier.height(PhotidySpacing.xs))
+                        Text(
+                            text = stringResource(
+                                LocR.string.settings_ai_scanning,
+                                progress.done,
+                                progress.total,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                        )
+                        Spacer(Modifier.height(PhotidySpacing.xxs))
+                        PhotidyProgressLine(
+                            progress = progress.done.toFloat() / progress.total,
+                        )
+                    }
+                }
+
+                is AiModelState.Failed -> AiStatusRow(
+                    text = stringResource(LocR.string.settings_ai_failed),
+                    actionLabel = stringResource(LocR.string.settings_ai_retry),
+                    onAction = onDownload,
+                    tint = colors.danger,
+                )
+
+                else -> AiStatusRow(
+                    text = stringResource(LocR.string.settings_ai_missing),
+                    actionLabel = stringResource(LocR.string.settings_ai_download),
+                    onAction = onDownload,
+                )
             }
-
-            state is AiModelState.Failed -> AiStatusRow(
-                text = stringResource(LocR.string.settings_ai_failed),
-                actionLabel = stringResource(LocR.string.settings_ai_retry),
-                onAction = onDownload,
-                tint = colors.danger,
-            )
-
-            else -> AiStatusRow(
-                text = stringResource(LocR.string.settings_ai_missing),
-                actionLabel = stringResource(LocR.string.settings_ai_download),
-                onAction = onDownload,
-            )
         }
     }
 }
+
+@Composable
+private fun aiTierDescription(tier: AiModelTier): String = stringResource(
+    when (tier) {
+        AiModelTier.LIGHT -> LocR.string.settings_ai_tier_light_desc
+        AiModelTier.BALANCED -> LocR.string.settings_ai_tier_balanced_desc
+        AiModelTier.ACCURATE -> LocR.string.settings_ai_tier_accurate_desc
+    },
+)
 
 @Composable
 private fun AiStatusRow(
@@ -1045,7 +1094,7 @@ private fun SettingsScreenPreview() {
         SettingsScreen(
             settings = AppSettings(),
             library = LibraryState(),
-            aiModel = AiModelState.NotDownloaded,
+            aiModel = AiModelState.NotDownloaded(AiModelTier.LIGHT),
             aiProgress = AiScanProgress(),
             appVersion = "0.1.0",
             onBack = {},
@@ -1062,6 +1111,7 @@ private fun SettingsScreenPreview() {
             onRefreshLibrary = {},
             onRequestAccess = {},
             onAiToggled = {},
+            onAiTierSelected = {},
             onDownloadAiModel = {},
             onDeleteAiModel = {},
         )

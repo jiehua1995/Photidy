@@ -42,7 +42,7 @@ APK 输出：`app/build/outputs/apk/debug/app-debug.apk`
 | 架构 | 多模块、Navigation Compose、Coroutines / StateFlow、ViewModel |
 | 本地存储 | DataStore（设置与当前整理快照）、MediaStore（只读媒体） |
 | 图片 | Coil（网格按目标尺寸解码缩略图） |
-| 本地 AI | TensorFlow Lite + 量化 MobileNet，可选下载、默认关闭 |
+| 本地 AI | TensorFlow Lite + 三档量化模型（MobileNet V1 / EfficientNet-Lite0 / Lite2，约 4–8 MB），可选下载、默认关闭 |
 | 构建 | Gradle Kotlin DSL、版本目录、`build-logic` 约定插件 |
 
 业务规则尽量放在 `core:model` 的纯函数里（去重分组、月份分组、统计、会话队列），因此大部分逻辑都能在没有设备的 JVM 上直接测试。所有整理状态只有 `core:data` 一个写入口，页面之间互不依赖，导航由 `app` 串联。
@@ -70,7 +70,7 @@ feature/
 - **唯一写入口**：所有整理状态写入 `PhotoRepository`，界面只读 Flow。
 - **纯函数优先**：筛选、去重分组、时间线分组、统计、会话状态机都在 `core:model`，可直接 JVM 单测。
 - **系统确认式文件操作**：删除 / 移动只通过 `MediaEditor` 发起 `MediaStore.createDeleteRequest` / `createWriteRequest`，应用不直接改动文件。
-- **本地 AI**：模型文件下载到应用私有目录，推理用 TensorFlow Lite 在本机完成；`core:model` 里的标签映射是纯函数。可选 AI 默认关闭。
+- **本地 AI**：模型文件下载到应用私有目录，推理用 TensorFlow Lite 在本机完成；`core:model` 里的标签映射是纯函数。可选 AI 默认关闭。三档模型（轻量 MobileNet V1、均衡 EfficientNet-Lite0、精准 EfficientNet-Lite2）共用同一套推理代码，输入尺寸与张量类型在运行时从模型读取；标签来自内置的 ImageNet 1000 类列表。切换档位会丢弃旧档位标签并用新模型重新识别。
 - **导航**：五个底部标签（整理 / 照片 / 搜索 / 收藏 / 回顾）为顶层路由，整理、详情、筛选等页面以全屏路由压栈，隐藏底栏。
 - **动效**：按压缩放、卡片动效与底栏选中位移都遵循 `PhotidyTheme.animationsEnabled`，关闭动画时立即到位。
 - **视觉令牌**：颜色、间距、圆角、阴影、动效参数统一来自 `core:designsystem`，不在页面硬编码。

@@ -46,7 +46,7 @@ object PhotidyGraph {
                 mediaEditor = MediaEditor(appContext),
                 scope = scope,
             )
-            aiModelManager = AiModelManager(appContext)
+            aiModelManager = AiModelManager(appContext, settingsRepository)
             aiTagger = AiTagger(appContext, aiModelManager)
             aiAnalysis = AiAnalysisCoordinator(
                 photoRepository = photoRepository,

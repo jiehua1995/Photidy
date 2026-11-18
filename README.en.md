@@ -84,7 +84,7 @@ Installing:
 
 - 🏷️ **Metadata filters**: screenshots, bursts, long videos, large files and likely duplicates. Everything reads only file name, size, resolution and capture time — no pixel decoding, no network.
 - 👯 **Duplicate comparison**: groups by size and resolution, shown side by side. Favourites win, then the newest shot; the rest can be flagged in one tap, with in-place undo.
-- 🤖 **Optional on-device AI**: downloads a ~4 MB quantized model and classifies photos locally as food, pets, documents, nature or architecture. The first run scans the whole library in the background; later runs only handle new photos. Progress is visible in Settings, and the model can be deleted at any time.
+- 🤖 **Optional on-device AI**: three model tiers (about 4 / 6 / 8 MB) trade a little speed for better recognition. The first run scans the whole library in the background; later runs only handle new photos, and switching tiers re-labels everything with the new model. Inference stays on the device, and the model can be deleted at any time.
 - 📊 **Insights**: composition ring, monthly distribution, storage usage, largest albums, and space reclaimable from the delete list and duplicates.
 
 ### 🎨 Look and language

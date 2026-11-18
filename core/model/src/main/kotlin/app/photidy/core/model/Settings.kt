@@ -60,6 +60,8 @@ data class AppSettings(
     val libraryChoiceMade: Boolean = false,
     /** Opt-in on-device model for coarse photo labels; the model is downloaded once. */
     val aiRecognitionEnabled: Boolean = false,
+    /** Which model size to download and use. Light keeps the original small download. */
+    val aiModelTier: AiModelTier = AiModelTier.LIGHT,
     /** Last filters used to start a session, newest first. */
     val recentFilters: List<PhotoFilter> = emptyList(),
 )

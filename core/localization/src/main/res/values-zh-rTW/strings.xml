@@ -304,6 +304,13 @@
     <string name="settings_ai_download">下載模型</string>
     <string name="settings_ai_retry">重試</string>
     <string name="settings_ai_delete">刪除模型</string>
+    <string name="settings_ai_tier_title">模型精度</string>
+    <string name="settings_ai_tier_light">輕量</string>
+    <string name="settings_ai_tier_balanced">均衡</string>
+    <string name="settings_ai_tier_accurate">精準</string>
+    <string name="settings_ai_tier_light_desc">約 4 MB · 最快，基礎辨識</string>
+    <string name="settings_ai_tier_balanced_desc">約 6 MB · 辨識明顯更準，依然輕快</string>
+    <string name="settings_ai_tier_accurate_desc">約 8 MB · 最準，稍慢一點</string>
     <string name="settings_about">關於</string>
     <string name="settings_version">版本 %1$s</string>
     <string name="settings_privacy_title">隱私</string>

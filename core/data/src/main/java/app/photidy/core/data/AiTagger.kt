@@ -11,14 +11,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Runs the optional quantized MobileNet classifier on a single photo. Everything happens
- * on device: the bitmap is decoded to a 224x224 buffer, one forward pass is executed, and
- * only the coarse [AiTag] result is kept.
+ * Runs the selected on-device ImageNet classifier on a single photo. Everything happens on
+ * device: the bitmap is decoded into the model's input size, one forward pass is executed,
+ * and only the coarse [AiTag] result is kept. Input and output tensor types are read from
+ * the model, so the three downloadable tiers share one code path.
  */
 class AiTagger(
     private val context: Context,
@@ -34,14 +36,17 @@ class AiTagger(
     private var labels: List<String> = emptyList()
 
     @Volatile
-    private var loadedModelLength: Long = -1L
+    private var loadedModelKey: String = ""
+
+    @Volatile
+    private var inputSize: Int = FALLBACK_INPUT_SIZE
 
     suspend fun analyze(photo: PhotoItem): List<AiTag> = withContext(Dispatchers.Default) {
         val uri = photo.contentUri ?: return@withContext emptyList()
         if (!modelManager.isReady()) return@withContext emptyList()
-        val bitmap = decode(uri) ?: return@withContext emptyList()
+        val ready = ensureInterpreter() ?: return@withContext emptyList()
+        val bitmap = decode(uri, inputSize) ?: return@withContext emptyList()
         try {
-            val ready = ensureInterpreter() ?: return@withContext emptyList()
             runCatching { classify(ready, bitmap) }.getOrElse { emptyList() }
         } finally {
             bitmap.recycle()
@@ -49,52 +54,89 @@ class AiTagger(
     }
 
     private suspend fun ensureInterpreter(): Interpreter? = mutex.withLock {
-        val length = modelManager.modelFile().length()
-        interpreter?.let { loaded -> if (loadedModelLength == length) return loaded }
+        val file = modelManager.modelFile()
+        val key = "${file.path}:${file.length()}"
+        interpreter?.let { loaded -> if (loadedModelKey == key) return loaded }
         if (!modelManager.isReady()) return null
 
         runCatching {
             interpreter?.close()
-            val options = Interpreter.Options().apply { setNumThreads(2) }
-            val loaded = Interpreter(modelManager.modelFile(), options)
-            labels = modelManager.labelsFile().readLines().map(String::trim)
+            val loaded = Interpreter(file, Interpreter.Options().apply { setNumThreads(2) })
+            val shape = loaded.getInputTensor(0).shape()
+            inputSize = if (shape.size == 4 && shape[3] == 3) shape[1] else FALLBACK_INPUT_SIZE
+            labels = readLabels()
             interpreter = loaded
-            loadedModelLength = length
+            loadedModelKey = key
             loaded
         }.getOrNull()
     }
 
-    private fun classify(interpreter: Interpreter, bitmap: Bitmap): List<AiTag> {
-        val scaled = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
-        return try {
-            val pixels = IntArray(INPUT_SIZE * INPUT_SIZE)
-            scaled.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE)
-            val input = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3).apply {
-                order(ByteOrder.nativeOrder())
-                pixels.forEach { pixel ->
-                    put(((pixel shr 16) and 0xFF).toByte())
-                    put(((pixel shr 8) and 0xFF).toByte())
-                    put((pixel and 0xFF).toByte())
-                }
-                rewind()
-            }
+    private fun readLabels(): List<String> =
+        context.assets.open(LABELS_ASSET).bufferedReader().use { reader ->
+            reader.readLines().map(String::trim).filter(String::isNotEmpty)
+        }
 
-            val classCount = interpreter.getOutputTensor(0).shape().last()
+    private fun classify(interpreter: Interpreter, bitmap: Bitmap): List<AiTag> {
+        val size = inputSize
+        val scaled = Bitmap.createScaledBitmap(bitmap, size, size, true)
+        return try {
+            val pixels = IntArray(size * size)
+            scaled.getPixels(pixels, 0, size, 0, 0, size, size)
+
+            val inputTensor = interpreter.getInputTensor(0)
+            val outputTensor = interpreter.getOutputTensor(0)
+            val inputType = inputTensor.dataType()
+            val outputType = outputTensor.dataType()
+            if (inputType != DataType.UINT8 && inputType != DataType.INT8) return emptyList()
+            if (outputType != DataType.UINT8 && outputType != DataType.INT8) return emptyList()
+            val classCount = outputTensor.shape().last()
+
+            val input = byteInput(pixels, inputType)
             val output = Array(1) { ByteArray(classCount) }
             interpreter.run(input, output)
-
-            val topLabels = output[0].withIndex()
-                .sortedByDescending { it.value.toInt() and 0xFF }
-                .take(TOP_K)
-                .filter { (it.value.toInt() and 0xFF) >= MIN_SCORE }
-                .mapNotNull { (index, _) -> labels.getOrNull(index) }
-            AiTagging.tagsFor(topLabels)
+            val isSigned = outputType == DataType.INT8
+            topTags(output[0].map { byte ->
+                val value = if (isSigned) byte.toInt() + 128 else byte.toInt() and 0xFF
+                value.toDouble() / 255.0
+            })
         } finally {
             if (scaled !== bitmap) scaled.recycle()
         }
     }
 
-    private fun decode(uriString: String): Bitmap? = runCatching {
+    private fun byteInput(pixels: IntArray, type: DataType): ByteBuffer {
+        val buffer = ByteBuffer.allocateDirect(pixels.size * 3).apply {
+            order(ByteOrder.nativeOrder())
+        }
+        val signed = type == DataType.INT8
+        pixels.forEach { pixel ->
+            val red = (pixel shr 16) and 0xFF
+            val green = (pixel shr 8) and 0xFF
+            val blue = pixel and 0xFF
+            buffer.put(if (signed) (red - 128).toByte() else red.toByte())
+            buffer.put(if (signed) (green - 128).toByte() else green.toByte())
+            buffer.put(if (signed) (blue - 128).toByte() else blue.toByte())
+        }
+        buffer.rewind()
+        return buffer
+    }
+
+    private fun topTags(scores: List<Double>): List<AiTag> {
+        val labelList = labels
+        if (labelList.isEmpty() || scores.isEmpty()) return emptyList()
+        val topLabels = scores.withIndex()
+            .sortedByDescending { it.value }
+            .take(TOP_K)
+            .filter { it.value >= MIN_SCORE }
+            .mapNotNull { (index, _) ->
+                // Some ImageNet classifiers add a background class at index 0.
+                val shifted = if (scores.size == labelList.size + 1) index - 1 else index
+                labelList.getOrNull(shifted)
+            }
+        return AiTagging.tagsFor(topLabels)
+    }
+
+    private fun decode(uriString: String, targetSize: Int): Bitmap? = runCatching {
         val uri = Uri.parse(uriString)
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         context.contentResolver.openInputStream(uri)?.use {
@@ -102,7 +144,7 @@ class AiTagger(
         }
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
 
-        val sampleSize = maxOf(1, minOf(bounds.outWidth, bounds.outHeight) / INPUT_SIZE)
+        val sampleSize = maxOf(1, minOf(bounds.outWidth, bounds.outHeight) / targetSize)
         val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
         val bitmap = context.contentResolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it, null, options)
@@ -121,10 +163,11 @@ class AiTagger(
     }
 
     private companion object {
-        const val INPUT_SIZE = 224
+        const val LABELS_ASSET = "imagenet_labels.txt"
+        const val FALLBACK_INPUT_SIZE = 224
         const val TOP_K = 5
 
         /** Quantized scores are 0..255; ~25% keeps weak guesses out. */
-        const val MIN_SCORE = 64
+        const val MIN_SCORE = 0.25
     }
 }
